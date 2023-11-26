@@ -3,6 +3,8 @@ package routes
 import (
 	"net/http"
 
+	syshandlers "kumande/modules/stats/http_handlers"
+
 	"github.com/labstack/echo"
 )
 
@@ -15,6 +17,8 @@ func InitV1() *echo.Echo {
 	})
 
 	// =============== Public routes ===============
+	// Dictionary
+	e.GET("api/v1/stats/consume_from/:ord/:limit", syshandlers.GetTotalConsumeByFrom)
 
 	// =============== Private routes ===============
 
