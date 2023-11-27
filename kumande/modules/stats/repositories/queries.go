@@ -11,13 +11,13 @@ import (
 	"strconv"
 )
 
-func GetTotalConsumeByFrom(page, pageSize int, path string, ord string, limit string) (response.Response, error) {
+func GetTotalConsumeMulti(page, pageSize int, path string, ord string, limit string, view string) (response.Response, error) {
 	// Declaration
 	var obj models.GetMostAppear
 	var arrobj []models.GetMostAppear
 	var res response.Response
 	var baseTable = "consume"
-	var mainCol = "consume_from"
+	var mainCol = view
 	var sqlStatement string
 
 	// Converted column

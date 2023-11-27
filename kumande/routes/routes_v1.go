@@ -19,6 +19,7 @@ func InitV1() *echo.Echo {
 	// =============== Public routes ===============
 	// Dictionary
 	e.GET("api/v1/stats/consume_from/:ord/:limit", syshandlers.GetTotalConsumeByFrom)
+	e.GET("api/v1/stats/consume_type/:ord/:limit", syshandlers.GetTotalConsumeByType)
 
 	// =============== Private routes ===============
 
