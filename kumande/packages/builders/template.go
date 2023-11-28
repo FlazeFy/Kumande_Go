@@ -95,3 +95,11 @@ func GetTemplateStats(ctx, firstTable, name string, ord string, joinArgs *string
 
 	return ""
 }
+
+func GetTemplateJobs(ctx, mainCol, key, res string) string {
+	if ctx == "json_search" {
+		return "REPLACE(JSON_EXTRACT(" + mainCol + ", '$[0]." + key + "'), '\"', '') as " + res
+	}
+
+	return ""
+}
