@@ -11,7 +11,7 @@ import (
 	"strconv"
 )
 
-func GetTotalConsumeMulti(page, pageSize int, path string, ord string, limit string, view string) (response.Response, error) {
+func GetTotalConsumeMulti(path string, ord string, limit string, view string) (response.Response, error) {
 	// Declaration
 	var obj models.GetMostAppear
 	var arrobj []models.GetMostAppear
