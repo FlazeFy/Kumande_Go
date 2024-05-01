@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	authhandlers "kumande/modules/auth/http_handlers"
+	consumehandlers "kumande/modules/consume/http_handlers"
 	syshandlers "kumande/modules/stats/http_handlers"
 
 	"github.com/labstack/echo"
@@ -29,6 +30,9 @@ func InitV1() *echo.Echo {
 	e.GET("api/v1/stats/consume_type/:ord/:limit", syshandlers.GetTotalConsumeByType)
 	e.GET("api/v1/stats/consume_ing/:ord/:limit", syshandlers.GetTotalConsumeByMainIng)
 	e.GET("api/v1/stats/consume_prov/:ord/:limit", syshandlers.GetTotalConsumeByProvide)
+
+	// Consume
+	e.GET("api/v1/consume/search/:slug", consumehandlers.GetConsumeBySlug)
 
 	// =============== Private routes ===============
 
