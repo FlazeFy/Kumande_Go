@@ -58,3 +58,32 @@ func GetTotalConsumeByProvide(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, result)
 }
+
+func GetBudgetSpendingYear(c echo.Context) error {
+	year := c.Param("year")
+
+	result, err := repositories.GetBudgetSpendingYear(year)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func GetSpendingInfo(c echo.Context) error {
+	result, err := repositories.GetSpendingInfo()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func GetBodyInfo(c echo.Context) error {
+	result, err := repositories.GetBodyInfo()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}

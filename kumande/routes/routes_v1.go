@@ -30,6 +30,9 @@ func InitV1() *echo.Echo {
 	e.GET("api/v1/stats/consume_type/:ord/:limit", syshandlers.GetTotalConsumeByType)
 	e.GET("api/v1/stats/consume_ing/:ord/:limit", syshandlers.GetTotalConsumeByMainIng)
 	e.GET("api/v1/stats/consume_prov/:ord/:limit", syshandlers.GetTotalConsumeByProvide)
+	e.GET("api/v1/stats/budget/:year", syshandlers.GetBudgetSpendingYear)
+	e.GET("api/v1/stats/count/payment", syshandlers.GetSpendingInfo)
+	e.GET("api/v1/stats/count/body", syshandlers.GetBodyInfo)
 
 	// Consume
 	e.GET("api/v1/consume/search/:slug", consumehandlers.GetConsumeBySlug)
