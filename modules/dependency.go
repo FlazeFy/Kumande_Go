@@ -4,6 +4,7 @@ import (
 	"kumande/modules/admin"
 	"kumande/modules/auth"
 	"kumande/modules/feedback"
+	"kumande/modules/history"
 	"kumande/modules/user"
 
 	"github.com/gin-gonic/gin"
@@ -16,16 +17,20 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	adminRepo := admin.NewAdminRepository(db)
 	userRepo := user.NewUserRepository(db)
 	feedbackRepo := feedback.NewFeedbackRepository(db)
+	historyRepo := history.NewHistoryRepository(db)
 
 	// Dependency Services
 	authService := auth.NewAuthService(userRepo, adminRepo, redisClient)
 	feedbackService := feedback.NewFeedbackService(feedbackRepo)
+	historyService := history.NewHistoryService(historyRepo)
 
 	// Dependency Controller
 	authController := auth.NewAuthController(authService)
 	feedbackController := feedback.NewFeedbackController(feedbackService)
+	historyController := history.NewHistoryController(historyService)
 
 	// Routes Endpoint
 	auth.AuthRouter(r, redisClient, *authController)
 	feedback.FeedbackRouter(r, *feedbackController, redisClient, db)
+	history.HistoryRouter(r, *historyController, redisClient, db)
 }
