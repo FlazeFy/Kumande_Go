@@ -4,6 +4,7 @@ import (
 	"kumande/models"
 	"kumande/utils"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -11,6 +12,7 @@ import (
 // Error Interface
 type ErrorRepository interface {
 	FindAllError(pagination utils.Pagination) ([]models.ErrorAudit, int64, error)
+	HardDeleteErrorByID(ID uuid.UUID) error
 }
 
 // Error Struct
@@ -59,4 +61,18 @@ func (r *errorRepository) FindAllError(pagination utils.Pagination) ([]models.Er
 	}
 
 	return errorsList, total, nil
+}
+
+func (r *errorRepository) HardDeleteErrorByID(ID uuid.UUID) error {
+	// Query
+	result := r.db.Unscoped().Where("id = ?", ID).Delete(&models.Error{})
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return nil
 }
