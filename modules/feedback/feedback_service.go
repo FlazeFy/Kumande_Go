@@ -9,6 +9,7 @@ import (
 // Feedback Interface
 type FeedbackService interface {
 	CreateFeedback(feedback *models.Feedback, userID uuid.UUID) error
+	GetAllFeedback() ([]models.Feedback, error)
 }
 
 // Feedback Struct
@@ -25,4 +26,8 @@ func NewFeedbackService(feedbackRepo FeedbackRepository) FeedbackService {
 
 func (r *feedbackService) CreateFeedback(feedback *models.Feedback, userID uuid.UUID) error {
 	return r.feedbackRepo.CreateFeedback(feedback, userID)
+}
+
+func (r *feedbackService) GetAllFeedback() ([]models.Feedback, error) {
+	return r.feedbackRepo.FindAllFeedback()
 }

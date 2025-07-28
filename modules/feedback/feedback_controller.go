@@ -1,11 +1,13 @@
 package feedback
 
 import (
+	"errors"
 	"kumande/models"
 	"kumande/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type FeedbackController struct {
@@ -14,6 +16,24 @@ type FeedbackController struct {
 
 func NewFeedbackController(feedbackService FeedbackService) *FeedbackController {
 	return &FeedbackController{FeedbackService: feedbackService}
+}
+
+// Queries
+func (c *FeedbackController) GetAllFeedback(ctx *gin.Context) {
+	// Service : Get All Feedback
+	feedback, err := c.FeedbackService.GetAllFeedback()
+
+	if err != nil {
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			utils.BuildResponseMessage(ctx, "failed", "feedback", "get", http.StatusNotFound, nil, nil)
+		default:
+			utils.BuildErrorMessage(ctx, err.Error())
+		}
+		return
+	}
+
+	utils.BuildResponseMessage(ctx, "success", "feedback", "get", http.StatusOK, feedback, nil)
 }
 
 // Command

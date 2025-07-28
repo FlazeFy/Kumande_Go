@@ -11,6 +11,7 @@ import (
 // Feedback Interface
 type FeedbackRepository interface {
 	CreateFeedback(feedback *models.Feedback, userID uuid.UUID) error
+	FindAllFeedback() ([]models.Feedback, error)
 }
 
 // Feedback Struct
@@ -31,4 +32,19 @@ func (r *feedbackRepository) CreateFeedback(feedback *models.Feedback, userID uu
 
 	// Query
 	return r.db.Create(feedback).Error
+}
+
+func (r *feedbackRepository) FindAllFeedback() ([]models.Feedback, error) {
+	// Model
+	var feedbacks []models.Feedback
+
+	// Query
+	if err := r.db.Preload("User").Find(&feedbacks).Error; err != nil {
+		return nil, err
+	}
+	if len(feedbacks) == 0 {
+		return nil, gorm.ErrRecordNotFound
+	}
+
+	return feedbacks, nil
 }
