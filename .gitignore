@@ -1,0 +1,5 @@
+/kumande/factories/logs
+kumande/configs/telegram.json
+.env
+kumande.log
+/logs
