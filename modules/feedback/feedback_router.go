@@ -22,6 +22,7 @@ func FeedbackRouter(r *gin.Engine, feedbackController FeedbackController, redisC
 		protected_feedback_admin.Use(middlewares.AuthMiddleware(redisClient, "admin"))
 		{
 			protected_feedback_admin.GET("/", feedbackController.GetAllFeedback)
+			protected_feedback_admin.DELETE("/destroy/:id", feedbackController.HardDeleteFeedbackById, middlewares.AuditTrailMiddleware(db, "hard_delete_feedback_by_id"))
 		}
 	}
 }
