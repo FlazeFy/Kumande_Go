@@ -3,6 +3,7 @@ package modules
 import (
 	"kumande/modules/admin"
 	"kumande/modules/auth"
+	"kumande/modules/errors"
 	"kumande/modules/feedback"
 	"kumande/modules/history"
 	"kumande/modules/user"
@@ -18,19 +19,23 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	userRepo := user.NewUserRepository(db)
 	feedbackRepo := feedback.NewFeedbackRepository(db)
 	historyRepo := history.NewHistoryRepository(db)
+	errorRepo := errors.NewErrorRepository(db)
 
 	// Dependency Services
 	authService := auth.NewAuthService(userRepo, adminRepo, redisClient)
 	feedbackService := feedback.NewFeedbackService(feedbackRepo)
 	historyService := history.NewHistoryService(historyRepo)
+	errorService := errors.NewErrorService(errorRepo)
 
 	// Dependency Controller
 	authController := auth.NewAuthController(authService)
 	feedbackController := feedback.NewFeedbackController(feedbackService)
 	historyController := history.NewHistoryController(historyService)
+	errorController := errors.NewErrorController(errorService)
 
 	// Routes Endpoint
 	auth.AuthRouter(r, redisClient, *authController)
 	feedback.FeedbackRouter(r, *feedbackController, redisClient, db)
 	history.HistoryRouter(r, *historyController, redisClient, db)
+	errors.ErrorRouter(r, *errorController, redisClient, db)
 }
