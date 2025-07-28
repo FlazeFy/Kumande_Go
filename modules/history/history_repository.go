@@ -10,6 +10,7 @@ import (
 // History Interface
 type HistoryRepository interface {
 	FindMyHistory(userID uuid.UUID) ([]models.History, error)
+	HardDeleteHistoryByID(ID, createdBy uuid.UUID) error
 }
 
 // History Struct
@@ -32,4 +33,18 @@ func (r *historyRepository) FindMyHistory(userID uuid.UUID) ([]models.History, e
 	}
 
 	return histories, nil
+}
+
+func (r *historyRepository) HardDeleteHistoryByID(ID, createdBy uuid.UUID) error {
+	// Query
+	result := r.db.Unscoped().Where("id = ?", ID).Where("created_by = ?", createdBy).Delete(&models.History{})
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return nil
 }
