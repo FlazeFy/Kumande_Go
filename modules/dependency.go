@@ -3,6 +3,7 @@ package modules
 import (
 	"kumande/modules/admin"
 	"kumande/modules/auth"
+	"kumande/modules/dictionary"
 	"kumande/modules/errors"
 	"kumande/modules/feedback"
 	"kumande/modules/history"
@@ -20,22 +21,26 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	feedbackRepo := feedback.NewFeedbackRepository(db)
 	historyRepo := history.NewHistoryRepository(db)
 	errorRepo := errors.NewErrorRepository(db)
+	dictionaryRepo := dictionary.NewDictionaryRepository(db)
 
 	// Dependency Services
 	authService := auth.NewAuthService(userRepo, adminRepo, redisClient)
 	feedbackService := feedback.NewFeedbackService(feedbackRepo)
 	historyService := history.NewHistoryService(historyRepo)
 	errorService := errors.NewErrorService(errorRepo)
+	dictionaryService := dictionary.NewDictionaryService(dictionaryRepo)
 
 	// Dependency Controller
 	authController := auth.NewAuthController(authService)
 	feedbackController := feedback.NewFeedbackController(feedbackService)
 	historyController := history.NewHistoryController(historyService)
 	errorController := errors.NewErrorController(errorService)
+	dictionaryController := dictionary.NewDictionaryController(dictionaryService)
 
 	// Routes Endpoint
 	auth.AuthRouter(r, redisClient, *authController)
 	feedback.FeedbackRouter(r, *feedbackController, redisClient, db)
 	history.HistoryRouter(r, *historyController, redisClient, db)
 	errors.ErrorRouter(r, *errorController, redisClient, db)
+	dictionary.DictionaryRouter(r, *dictionaryController, redisClient, db)
 }
