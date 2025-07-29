@@ -8,6 +8,7 @@ import (
 	"kumande/modules/feedback"
 	"kumande/modules/history"
 	"kumande/modules/user"
+	"kumande/seeders"
 
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
@@ -43,4 +44,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	history.HistoryRouter(r, *historyController, redisClient, db)
 	errors.ErrorRouter(r, *errorController, redisClient, db)
 	dictionary.DictionaryRouter(r, *dictionaryController, redisClient, db)
+
+	// Seeder & Factories
+	seeders.SeedAdmins(adminRepo, 5)
 }

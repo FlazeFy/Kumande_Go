@@ -2,12 +2,18 @@ package admin
 
 import (
 	"kumande/models"
+	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type AdminRepository interface {
 	FindByEmail(email string) (*models.Admin, error)
+
+	// For Seeder
+	CreateAdmin(admin *models.Admin) error
+	DeleteAll() error
 }
 
 type adminRepository struct {
@@ -29,4 +35,17 @@ func (r *adminRepository) FindByEmail(email string) (*models.Admin, error) {
 	}
 
 	return &admin, nil
+}
+
+// For Seeder
+func (r *adminRepository) DeleteAll() error {
+	return r.db.Where("1 = 1").Delete(&models.Admin{}).Error
+}
+func (r *adminRepository) CreateAdmin(admin *models.Admin) error {
+	admin.ID = uuid.New()
+	admin.CreatedAt = time.Now()
+	admin.TelegramIsValid = false
+
+	// Query
+	return r.db.Create(admin).Error
 }
