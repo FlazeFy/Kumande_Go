@@ -13,7 +13,7 @@ type (
 		Password        string    `json:"password" gorm:"type:varchar(500);not null" binding:"required,min=6,max=36"`
 		Email           string    `json:"email" gorm:"type:varchar(500);not null" binding:"required,email,max=500"`
 		Gender          string    `json:"gender" gorm:"type:varchar(14);not null" binding:"required,max=14"`
-		BornAt          string    `json:"born_at" gorm:"type:date;null" binding:"omitempty"`
+		BornAt          time.Time `json:"born_at" gorm:"type:date;null" binding:"omitempty"`
 		Currency        string    `json:"currency" gorm:"type:varchar(3);not null" binding:"required,min=3,max=3"`
 		TelegramUserId  *string   `json:"telegram_user_id" gorm:"type:varchar(36);null" binding:"omitempty,max=36"`
 		TelegramIsValid bool      `json:"telegram_is_valid"`

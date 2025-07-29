@@ -12,3 +12,4 @@ var ResponseMessages = map[string]string{
 	"empty":       "not found",
 }
 var Currencies = []string{"IDR", "USD", "EUR", "JPY", "GBP", "CNY", "CAD", "CHF", "AUD", "HKD", "SGD"}
+var Genders = []string{"male", "female"}
