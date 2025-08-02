@@ -4,6 +4,7 @@ import (
 	"kumande/modules/admin"
 	"kumande/modules/allergic"
 	"kumande/modules/auth"
+	bodyInfo "kumande/modules/body_info"
 	"kumande/modules/budget"
 	"kumande/modules/dictionary"
 	"kumande/modules/errors"
@@ -29,6 +30,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	budgetRepo := budget.NewBudgetRepository(db)
 	tagRepo := tag.NewTagRepository(db)
 	allergicRepo := allergic.NewAllergicRepository(db)
+	bodyInfoRepo := bodyInfo.NewBodyInfoRepository(db)
 
 	// Dependency Services
 	adminService := admin.NewAdminService(adminRepo)
@@ -64,4 +66,5 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	seeders.SeedTags(tagRepo, userRepo, 20)
 	seeders.SeedErrors(errorRepo, 20)
 	seeders.SeedAllergic(allergicRepo, userRepo, 20)
+	seeders.SeedBodyInfo(bodyInfoRepo, userRepo, 60)
 }
