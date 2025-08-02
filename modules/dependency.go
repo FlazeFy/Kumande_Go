@@ -67,4 +67,5 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	seeders.SeedErrors(errorRepo, 20)
 	seeders.SeedAllergic(allergicRepo, userRepo, 20)
 	seeders.SeedBodyInfo(bodyInfoRepo, userRepo, 60)
+	seeders.SeedFeedbacks(feedbackRepo, userRepo, 20)
 }
