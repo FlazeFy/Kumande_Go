@@ -3,6 +3,7 @@ package errors
 import (
 	"kumande/models"
 	"kumande/utils"
+	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -12,7 +13,9 @@ import (
 // Error Interface
 type ErrorRepository interface {
 	FindAllError(pagination utils.Pagination) ([]models.ErrorAudit, int64, error)
+	CreateError(errData *models.Error) error
 	HardDeleteErrorByID(ID uuid.UUID) error
+	DeleteAll() error
 }
 
 // Error Struct
@@ -75,4 +78,19 @@ func (r *errorRepository) HardDeleteErrorByID(ID uuid.UUID) error {
 	}
 
 	return nil
+}
+
+func (r *errorRepository) CreateError(errData *models.Error) error {
+	// Default
+	errData.ID = uuid.New()
+	errData.CreatedAt = time.Now()
+	errData.IsFixed = false
+
+	// Query
+	return r.db.Create(errData).Error
+}
+
+// For Seeder
+func (r *errorRepository) DeleteAll() error {
+	return r.db.Where("1 = 1").Delete(&models.Error{}).Error
 }
