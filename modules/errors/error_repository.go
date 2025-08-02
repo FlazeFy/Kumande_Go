@@ -15,7 +15,12 @@ type ErrorRepository interface {
 	FindAllError(pagination utils.Pagination) ([]models.ErrorAudit, int64, error)
 	CreateError(errData *models.Error) error
 	HardDeleteErrorByID(ID uuid.UUID) error
+
+	// For Seeder
 	DeleteAll() error
+
+	// For Scheduler
+	FindAllErrorAudit() ([]models.ErrorAudit, error)
 }
 
 // Error Struct
@@ -88,6 +93,32 @@ func (r *errorRepository) CreateError(errData *models.Error) error {
 
 	// Query
 	return r.db.Create(errData).Error
+}
+
+func (r *errorRepository) FindAllErrorAudit() ([]models.ErrorAudit, error) {
+	// Model
+	var errorsList []models.ErrorAudit
+
+	// Query
+	result := r.db.Table("errors").
+		Select("message, string_agg(created_at::text, ', ') as created_at, COUNT(1) as total").
+		Group("message").
+		Order(clause.OrderBy{
+			Columns: []clause.OrderByColumn{
+				{Column: clause.Column{Name: "total"}, Desc: true},
+				{Column: clause.Column{Name: "message"}, Desc: false},
+				{Column: clause.Column{Name: "created_at"}, Desc: false},
+			},
+		}).Find(&errorsList)
+
+	if len(errorsList) == 0 {
+		return nil, gorm.ErrRecordNotFound
+	}
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return errorsList, nil
 }
 
 // For Seeder
