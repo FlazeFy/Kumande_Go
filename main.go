@@ -67,6 +67,7 @@ func MigrateAll(db *gorm.DB) {
 		&models.Budget{},
 		&models.Tag{},
 		&models.Reminder{},
+		&models.UserTrack{},
 	)
 
 	if err != nil {
