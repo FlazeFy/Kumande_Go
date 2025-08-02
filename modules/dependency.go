@@ -3,6 +3,7 @@ package modules
 import (
 	"kumande/modules/admin"
 	"kumande/modules/auth"
+	"kumande/modules/budget"
 	"kumande/modules/dictionary"
 	"kumande/modules/errors"
 	"kumande/modules/feedback"
@@ -23,6 +24,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	historyRepo := history.NewHistoryRepository(db)
 	errorRepo := errors.NewErrorRepository(db)
 	dictionaryRepo := dictionary.NewDictionaryRepository(db)
+	budgetRepo := budget.NewBudgetRepository(db)
 
 	// Dependency Services
 	adminService := admin.NewAdminService(adminRepo)
@@ -54,4 +56,5 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	seeders.SeedUsers(userRepo, 20)
 	seeders.SeedDictionaries(dictionaryRepo)
 	seeders.SeedHistories(historyRepo, userRepo, 5)
+	seeders.SeedBudget(budgetRepo, userRepo, 20)
 }
