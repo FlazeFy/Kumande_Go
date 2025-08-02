@@ -15,3 +15,5 @@ var Currencies = []string{"IDR", "USD", "EUR", "JPY", "GBP", "CNY", "CAD", "CHF"
 var Genders = []string{"male", "female"}
 var Months = []string{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
 var TrackSources = []string{"Web", "Mobile", "Telegram Bot", "Line Bot"}
+var WeatherHitFroms = []string{"Task Schedule", "Manual"}
+var WeatherConditions = []string{"Thunderstorm", "Drizzle", "Rain", "Snow", "Mist", "Smoke", "Haze", "Dust", "Fog", "Sand", "Ash", "Squall", "Tornado", "Clear", "Clouds"}

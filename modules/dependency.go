@@ -13,6 +13,7 @@ import (
 	"kumande/modules/tag"
 	"kumande/modules/user"
 	userTrack "kumande/modules/user_track"
+	userWeather "kumande/modules/user_weather"
 	"kumande/seeders"
 
 	"github.com/gin-gonic/gin"
@@ -33,6 +34,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	allergicRepo := allergic.NewAllergicRepository(db)
 	bodyInfoRepo := bodyInfo.NewBodyInfoRepository(db)
 	userTrackRepo := userTrack.NewUserTrackRepository(db)
+	userWeatherRepo := userWeather.NewUserWeatherRepository(db)
 
 	// Dependency Services
 	adminService := admin.NewAdminService(adminRepo)
@@ -71,4 +73,5 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	seeders.SeedBodyInfo(bodyInfoRepo, userRepo, 60)
 	seeders.SeedFeedbacks(feedbackRepo, userRepo, 20)
 	seeders.SeedUserTracks(userTrackRepo, userRepo, 60)
+	seeders.SeedUserWeathers(userWeatherRepo, userRepo, 30)
 }

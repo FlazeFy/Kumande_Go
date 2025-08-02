@@ -2,7 +2,6 @@ package main
 
 import (
 	config "kumande/configs"
-	"kumande/models"
 	"kumande/modules"
 	"log"
 	"os"
@@ -10,7 +9,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"gorm.io/gorm"
 )
 
 func initLogging() {
@@ -38,7 +36,7 @@ func main() {
 
 	// Connect DB
 	db := config.ConnectDatabase()
-	MigrateAll(db)
+	modules.MigrateAll(db)
 
 	// Setup Gin
 	router := gin.Default()
@@ -51,28 +49,4 @@ func main() {
 	router.Run(":" + port)
 
 	log.Printf("Kumande is running on port %s\n", port)
-}
-
-func MigrateAll(db *gorm.DB) {
-	err := db.AutoMigrate(
-		&models.User{},
-		&models.Admin{},
-		&models.History{},
-		&models.Error{},
-		&models.Feedback{},
-		&models.AuditTrail{},
-		&models.Dictionary{},
-		&models.Allergic{},
-		&models.BodyInfo{},
-		&models.Budget{},
-		&models.Tag{},
-		&models.Reminder{},
-		&models.UserTrack{},
-	)
-
-	if err != nil {
-		panic(err.Error())
-	}
-
-	log.Println("Migrate Success!")
 }
