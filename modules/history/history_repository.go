@@ -13,6 +13,9 @@ type HistoryRepository interface {
 	FindMyHistory(userID uuid.UUID) ([]models.History, error)
 	HardDeleteHistoryByID(ID, createdBy uuid.UUID) error
 
+	// Task Scheduler
+	DeleteHistoryForLastNDays(days int) (int64, error)
+
 	// For Seeder
 	CreateHistory(history *models.History, userID uuid.UUID) error
 	DeleteAll() error
@@ -63,6 +66,21 @@ func (r *historyRepository) CreateHistory(history *models.History, userID uuid.U
 
 	// Query
 	return r.db.Create(history).Error
+}
+
+// Task Scheduler
+func (r *historyRepository) DeleteHistoryForLastNDays(days int) (int64, error) {
+	// Cutoff Days
+	cutoff := time.Now().AddDate(0, 0, -days)
+
+	// Query
+	result := r.db.Unscoped().Where("created_at < ?", cutoff).Delete(&models.History{})
+
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return result.RowsAffected, nil
 }
 
 func (r *historyRepository) DeleteAll() error {

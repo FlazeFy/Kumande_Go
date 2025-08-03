@@ -61,7 +61,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	dictionary.DictionaryRouter(r, *dictionaryController, redisClient, db)
 
 	// Task Scheduler
-	SetUpScheduler(adminService, errorService, userWeatherService, userService)
+	SetUpScheduler(adminService, errorService, userWeatherService, userService, historyService)
 
 	// Seeder & Factories
 	seeders.SeedAdmins(adminRepo, 5)
