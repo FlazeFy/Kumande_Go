@@ -1,6 +1,7 @@
 package user
 
 import (
+	"errors"
 	"kumande/models"
 	"time"
 
@@ -13,6 +14,9 @@ type UserRepository interface {
 	FindByEmail(email string) (*models.User, error)
 	FindById(ID uuid.UUID) (*models.MyProfile, error)
 	CreateUser(user *models.User) (*models.User, error)
+
+	// For Task Scheduler
+	FindUserReadyFetchWeather() ([]models.UserReadyFetchWeather, error)
 
 	// For Seeder
 	DeleteAll() error
@@ -114,4 +118,36 @@ func (r *userRepository) FindOneHasFlowAndPocketRandom() (*models.User, error) {
 	}
 
 	return &users, nil
+}
+
+// For Task Scheduler
+func (r *userRepository) FindUserReadyFetchWeather() ([]models.UserReadyFetchWeather, error) {
+	// Model
+	var users []models.UserReadyFetchWeather
+
+	// Query
+	result := r.db.Table("users").
+		Select(`
+			user_tracks.track_lat,user_tracks.track_long,user_tracks.created_at,users.id as user_id,
+			users.username,users.telegram_user_id,users.telegram_is_valid
+		`).
+		Joins(`
+			JOIN (
+				SELECT DISTINCT ON (created_by) *
+				FROM user_tracks
+				ORDER BY created_by, created_at DESC
+			) AS user_tracks ON user_tracks.created_by = users.id
+		`).
+		Where("user_tracks.track_lat IS NOT NULL AND user_tracks.track_long IS NOT NULL").
+		Order("users.username ASC").
+		Find(&users)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if len(users) == 0 {
+		return nil, errors.New("no user track found")
+	}
+
+	return users, nil
 }

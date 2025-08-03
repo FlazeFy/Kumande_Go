@@ -29,6 +29,15 @@ type (
 		Email    string `json:"email" binding:"required,email"`
 		Password string `json:"password" binding:"required"`
 	}
+	UserReadyFetchWeather struct {
+		UserID          uuid.UUID `json:"user_id"`
+		TrackLat        string    `json:"track_lat"`
+		TrackLong       string    `json:"track_long"`
+		CreatedAt       time.Time `json:"created_at"`
+		Username        string    `json:"username" gorm:"type:varchar(36);not null"`
+		TelegramUserId  *string   `json:"telegram_user_id" gorm:"type:varchar(36);null"`
+		TelegramIsValid bool      `json:"telegram_is_valid"`
+	}
 	// All Role
 	Account interface {
 		GetID() uuid.UUID
