@@ -49,6 +49,7 @@ func UserFactory(username, email, telegramUserId, password *string, isValid bool
 		Password:        string(hashedPass),
 		TelegramUserId:  finalTelegramUserId,
 		TelegramIsValid: isValid,
+		ActivityFactor:  gofakeit.Float64Range(1.1, 2),
 		Email:           finalEmail,
 		Gender:          gofakeit.RandomString(configs.Genders),
 		BornAt:          bornAt,

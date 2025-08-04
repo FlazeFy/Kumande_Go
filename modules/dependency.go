@@ -7,6 +7,7 @@ import (
 	bodyInfo "kumande/modules/body_info"
 	"kumande/modules/budget"
 	"kumande/modules/consume"
+	countCalorie "kumande/modules/count_calorie"
 	"kumande/modules/dictionary"
 	"kumande/modules/errors"
 	"kumande/modules/feedback"
@@ -38,6 +39,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	userWeatherRepo := userWeather.NewUserWeatherRepository(db)
 	consumeRepo := consume.NewConsumeRepository(db)
 	consumeListRepo := consume.NewConsumeListRepository(db)
+	countCalorieRepo := countCalorie.NewCountCalorieRepository(db)
 
 	// Dependency Services
 	adminService := admin.NewAdminService(adminRepo)
@@ -81,4 +83,5 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	seeders.SeedUserWeathers(userWeatherRepo, userRepo, 30)
 	seeders.SeedConsume(consumeRepo, userRepo, 100)
 	seeders.SeedConsumeList(consumeListRepo, userRepo, 50)
+	seeders.SeedCountCalorie(countCalorieRepo, userRepo, 60)
 }

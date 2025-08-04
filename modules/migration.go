@@ -25,6 +25,7 @@ func MigrateAll(db *gorm.DB) {
 		&models.UserWeather{},
 		&models.Consume{},
 		&models.ConsumeList{},
+		&models.CountCalorie{},
 	)
 
 	if err != nil {
