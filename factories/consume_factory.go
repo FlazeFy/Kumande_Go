@@ -1,0 +1,65 @@
+package factories
+
+import (
+	"encoding/json"
+	"kumande/configs"
+	"kumande/models"
+	"kumande/utils"
+	"time"
+
+	"github.com/brianvoe/gofakeit/v6"
+)
+
+func ConsumeFactory() models.Consume {
+	consumeProvide := gofakeit.Company()
+	consumePrice := gofakeit.Number(2000, 200000)
+	end := time.Now().AddDate(0, 0, -1)
+	start := end.AddDate(0, 0, -60)
+	consumeBuyAt := gofakeit.DateRange(start, end)
+
+	var consumeTag []byte
+	if gofakeit.Bool() {
+		tagName := gofakeit.Word()
+		slugName := utils.ConvertToSlug(tagName)
+		checkpoints := []models.ConsumeTag{
+			{TagName: tagName, SlugName: slugName},
+			{TagName: tagName, SlugName: slugName},
+			{TagName: tagName, SlugName: slugName},
+		}
+		jsonData, _ := json.Marshal(checkpoints)
+		consumeTag = jsonData
+	} else {
+		consumeTag = nil
+	}
+
+	var consumeComment *string
+	if gofakeit.Bool() {
+		consumeCommentDum := gofakeit.Sentence(gofakeit.Number(1, 3))
+		consumeComment = &consumeCommentDum
+	} else {
+		consumeComment = nil
+	}
+
+	var consumeDetail *string
+	if gofakeit.Bool() {
+		consumeDetailDum := gofakeit.Sentence(gofakeit.Number(3, 10))
+		consumeDetail = &consumeDetailDum
+	} else {
+		consumeDetail = nil
+	}
+
+	return models.Consume{
+		ConsumeName:    gofakeit.ProductName(),
+		ConsumeDetail:  consumeDetail,
+		ConsumeType:    gofakeit.RandomString(configs.ConsumeTypes),
+		ConsumeFrom:    gofakeit.RandomString(configs.ConsumeFroms),
+		ConsumePrice:   &consumePrice,
+		ConsumeBuyAt:   &consumeBuyAt,
+		ConsumeQty:     gofakeit.Number(1, 3),
+		ConsumeImage:   nil,
+		ConsumeProvide: &consumeProvide,
+		ConsumeComment: consumeComment,
+		ConsumeTag:     consumeTag,
+		IsFavorite:     gofakeit.Bool(),
+	}
+}

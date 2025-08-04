@@ -6,6 +6,7 @@ import (
 	"kumande/modules/auth"
 	bodyInfo "kumande/modules/body_info"
 	"kumande/modules/budget"
+	"kumande/modules/consume"
 	"kumande/modules/dictionary"
 	"kumande/modules/errors"
 	"kumande/modules/feedback"
@@ -35,6 +36,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	bodyInfoRepo := bodyInfo.NewBodyInfoRepository(db)
 	userTrackRepo := userTrack.NewUserTrackRepository(db)
 	userWeatherRepo := userWeather.NewUserWeatherRepository(db)
+	consumeRepo := consume.NewConsumeRepository(db)
 
 	// Dependency Services
 	adminService := admin.NewAdminService(adminRepo)
@@ -76,4 +78,5 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	seeders.SeedFeedbacks(feedbackRepo, userRepo, 20)
 	seeders.SeedUserTracks(userTrackRepo, userRepo, 60)
 	seeders.SeedUserWeathers(userWeatherRepo, userRepo, 30)
+	seeders.SeedConsume(consumeRepo, userRepo, 100)
 }
