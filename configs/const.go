@@ -19,3 +19,5 @@ var WeatherHitFroms = []string{"Task Schedule", "Manual"}
 var WeatherConditions = []string{"Thunderstorm", "Drizzle", "Rain", "Snow", "Mist", "Smoke", "Haze", "Dust", "Fog", "Sand", "Ash", "Squall", "Tornado", "Clear", "Clouds"}
 var ConsumeTypes = []string{"Food", "Drink", "Snack"}
 var ConsumeFroms = []string{"GoFood", "GrabFood", "ShopeeFood", "Dine-In", "Take Away", "Cooking"}
+var ReminderTypes = []string{"Every Day", "Every Month", "Every Year"}
+var ReminderAttachmentTypes = []string{"Image", "URL", "Location"}

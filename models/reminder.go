@@ -21,4 +21,12 @@ type (
 		CreatedBy uuid.UUID `json:"created_by" gorm:"not null"`
 		User      User      `json:"-" gorm:"foreignKey:CreatedBy;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	}
+	ReminderContext struct {
+		Time string `json:"time"`
+	}
+	ReminderAttachment struct {
+		AttachmentType    string `json:"attachment_type"`
+		AttachmentContext string `json:"attachment_context"`
+		AttachmentName    string `json:"attachment_name"`
+	}
 )

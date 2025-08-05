@@ -12,6 +12,7 @@ import (
 	"kumande/modules/errors"
 	"kumande/modules/feedback"
 	"kumande/modules/history"
+	"kumande/modules/reminder"
 	"kumande/modules/tag"
 	"kumande/modules/user"
 	userTrack "kumande/modules/user_track"
@@ -41,6 +42,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	consumeListRepo := consume.NewConsumeListRepository(db)
 	consumeListRelRepo := consume.NewConsumeListRelRepository(db)
 	countCalorieRepo := countCalorie.NewCountCalorieRepository(db)
+	reminderRepo := reminder.NewReminderRepository(db)
 
 	// Dependency Services
 	adminService := admin.NewAdminService(adminRepo)
@@ -86,4 +88,5 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	seeders.SeedConsumeList(consumeListRepo, userRepo, 50)
 	seeders.SeedCountCalorie(countCalorieRepo, userRepo, 60)
 	seeders.SeedConsumeListRelations(consumeListRelRepo, userRepo, consumeRepo, consumeListRepo, 10)
+	seeders.SeedReminder(reminderRepo, userRepo, 20)
 }

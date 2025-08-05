@@ -12,6 +12,9 @@ import (
 
 func ConsumeFactory() models.Consume {
 	consumeProvide := gofakeit.Company()
+	if len(consumeProvide) > 36 {
+		consumeProvide = consumeProvide[:36]
+	}
 	consumePrice := gofakeit.Number(2000, 200000)
 	end := time.Now().AddDate(0, 0, -1)
 	start := end.AddDate(0, 0, -60)
