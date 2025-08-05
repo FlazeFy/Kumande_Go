@@ -39,6 +39,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	userWeatherRepo := userWeather.NewUserWeatherRepository(db)
 	consumeRepo := consume.NewConsumeRepository(db)
 	consumeListRepo := consume.NewConsumeListRepository(db)
+	consumeListRelRepo := consume.NewConsumeListRelRepository(db)
 	countCalorieRepo := countCalorie.NewCountCalorieRepository(db)
 
 	// Dependency Services
@@ -84,4 +85,5 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	seeders.SeedConsume(consumeRepo, userRepo, 100)
 	seeders.SeedConsumeList(consumeListRepo, userRepo, 50)
 	seeders.SeedCountCalorie(countCalorieRepo, userRepo, 60)
+	seeders.SeedConsumeListRelations(consumeListRelRepo, userRepo, consumeRepo, consumeListRepo, 10)
 }

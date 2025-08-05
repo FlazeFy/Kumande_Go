@@ -12,6 +12,7 @@ type ConsumeRepository interface {
 	// For Seeder
 	CreateConsume(consume *models.Consume, userId uuid.UUID) error
 	DeleteAll() error
+	FindOneRandom(userID uuid.UUID) (*models.Consume, error)
 }
 
 type consumeRepository struct {
@@ -35,4 +36,14 @@ func (r *consumeRepository) CreateConsume(consume *models.Consume, userId uuid.U
 
 	// Query
 	return r.db.Create(consume).Error
+}
+func (r *consumeRepository) FindOneRandom(userID uuid.UUID) (*models.Consume, error) {
+	var consume models.Consume
+
+	err := r.db.Where("created_by", userID).Order("RANDOM()").Limit(1).First(&consume).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &consume, nil
 }
