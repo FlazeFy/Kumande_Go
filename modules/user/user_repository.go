@@ -23,6 +23,7 @@ type UserRepository interface {
 	FindOneRandom() (*models.User, error)
 	FindOneHasFlowAndPocketRandom() (*models.User, error)
 	FindOneHasConsumeAndConsumeList() ([]models.User, error)
+	FindOneHasReminder() ([]models.User, error)
 }
 
 type userRepository struct {
@@ -159,6 +160,21 @@ func (r *userRepository) FindOneHasConsumeAndConsumeList() ([]models.User, error
 	err := r.db.Select("users.id, users.username, users.password, users.email, users.telegram_user_id, users.telegram_is_valid, users.created_at").
 		Joins("JOIN consumes c ON c.created_by = users.id").
 		Joins("JOIN consume_lists cl ON cl.created_by = users.id").
+		Group("users.id").
+		Find(&users).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func (r *userRepository) FindOneHasReminder() ([]models.User, error) {
+	var users []models.User
+
+	err := r.db.Select("users.id, users.username, users.password, users.email, users.telegram_user_id, users.telegram_is_valid, users.created_at").
+		Joins("JOIN reminders r ON r.created_by = users.id").
 		Group("users.id").
 		Find(&users).Error
 

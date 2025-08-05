@@ -27,6 +27,7 @@ func MigrateAll(db *gorm.DB) {
 		&models.ConsumeList{},
 		&models.CountCalorie{},
 		&models.ConsumeListRelation{},
+		&models.ReminderUsed{},
 	)
 
 	if err != nil {

@@ -12,6 +12,7 @@ type ReminderRepository interface {
 	// For Seeder
 	CreateReminder(reminder *models.Reminder, userId uuid.UUID) error
 	DeleteAll() error
+	FindOneRandom(userID uuid.UUID) (*models.Reminder, error)
 }
 
 type reminderRepository struct {
@@ -33,4 +34,14 @@ func (r *reminderRepository) CreateReminder(reminder *models.Reminder, userId uu
 
 	// Query
 	return r.db.Create(reminder).Error
+}
+func (r *reminderRepository) FindOneRandom(userID uuid.UUID) (*models.Reminder, error) {
+	var reminder models.Reminder
+
+	err := r.db.Where("created_by", userID).Order("RANDOM()").Limit(1).First(&reminder).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &reminder, nil
 }
