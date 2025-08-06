@@ -9,7 +9,7 @@ import (
 type (
 	Hydration struct {
 		ID        uuid.UUID `json:"id" gorm:"type:uuid;primaryKey"`
-		VolumeML  int       `json:"volume_ml" gorm:"type:int;not null" binding:"required,min=1,max=9999"`
+		VolumeML  int       `json:"volume_ml" gorm:"type:int;not null" binding:"required,min=1,max=999"`
 		CreatedAt time.Time `json:"created_at" gorm:"type:timestamp;not null"`
 		// FK - User
 		CreatedBy uuid.UUID `json:"created_by" gorm:"not null"`
