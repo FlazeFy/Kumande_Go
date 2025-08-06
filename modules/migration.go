@@ -30,6 +30,7 @@ func MigrateAll(db *gorm.DB) {
 		&models.ReminderUsed{},
 		&models.Sleep{},
 		&models.Hydration{},
+		&models.ConsumeRate{},
 	)
 
 	if err != nil {
