@@ -13,6 +13,7 @@ import (
 	"kumande/modules/feedback"
 	"kumande/modules/history"
 	"kumande/modules/reminder"
+	"kumande/modules/stats"
 	"kumande/modules/tag"
 	"kumande/modules/user"
 	userTrack "kumande/modules/user_track"
@@ -25,6 +26,9 @@ import (
 )
 
 func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
+	// Dependency Cache
+	statsCache := stats.NewStatsCache(redisClient)
+
 	// Dependency Repositories
 	adminRepo := admin.NewAdminRepository(db)
 	userRepo := user.NewUserRepository(db)
@@ -44,6 +48,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	countCalorieRepo := countCalorie.NewCountCalorieRepository(db)
 	reminderRepo := reminder.NewReminderRepository(db)
 	reminderUsedRepo := reminder.NewReminderUsedRepository(db)
+	statsRepo := stats.NewStatsRepository(db)
 
 	// Dependency Services
 	adminService := admin.NewAdminService(adminRepo)
@@ -54,6 +59,8 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	errorService := errors.NewErrorService(errorRepo)
 	dictionaryService := dictionary.NewDictionaryService(dictionaryRepo)
 	userWeatherService := userWeather.NewUserWeatherService(userWeatherRepo)
+	consumeService := consume.NewConsumeService(consumeRepo)
+	statsService := stats.NewStatsService(statsRepo, redisClient, statsCache)
 
 	// Dependency Controller
 	authController := auth.NewAuthController(authService)
@@ -61,6 +68,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	historyController := history.NewHistoryController(historyService)
 	errorController := errors.NewErrorController(errorService)
 	dictionaryController := dictionary.NewDictionaryController(dictionaryService)
+	consumeController := consume.NewConsumeController(consumeService, statsService)
 
 	// Routes Endpoint
 	auth.AuthRouter(r, redisClient, *authController)
@@ -68,6 +76,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	history.HistoryRouter(r, *historyController, redisClient, db)
 	errors.ErrorRouter(r, *errorController, redisClient, db)
 	dictionary.DictionaryRouter(r, *dictionaryController, redisClient, db)
+	consume.ConsumeRouter(r, *consumeController, redisClient, db)
 
 	// Task Scheduler
 	SetUpScheduler(adminService, errorService, userWeatherService, userService, historyService)

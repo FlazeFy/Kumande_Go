@@ -1,5 +1,7 @@
 package configs
 
+import "time"
+
 var ResponseMessages = map[string]string{
 	"post":        "created",
 	"put":         "updated",
@@ -21,3 +23,7 @@ var ConsumeTypes = []string{"Food", "Drink", "Snack"}
 var ConsumeFroms = []string{"GoFood", "GrabFood", "ShopeeFood", "Dine-In", "Take Away", "Cooking"}
 var ReminderTypes = []string{"Every Day", "Every Month", "Every Year"}
 var ReminderAttachmentTypes = []string{"Image", "URL", "Location"}
+var StatsConsumeField = []string{"consume_type", "consume_from", "consume_provide"}
+
+// Rules
+var RedisTime = 10 * time.Minute
