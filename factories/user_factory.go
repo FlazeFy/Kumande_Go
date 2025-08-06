@@ -44,6 +44,14 @@ func UserFactory(username, email, telegramUserId, password *string, isValid bool
 	end := now.AddDate(-8, 0, 0)
 	bornAt := gofakeit.DateRange(start, end)
 
+	var bloodTypes *string
+	if gofakeit.Bool() {
+		bloodType := gofakeit.RandomString(configs.BloodTypes)
+		bloodTypes = &bloodType
+	} else {
+		bloodTypes = nil
+	}
+
 	return models.User{
 		Username:        finalUsername,
 		Password:        string(hashedPass),
@@ -53,6 +61,7 @@ func UserFactory(username, email, telegramUserId, password *string, isValid bool
 		Email:           finalEmail,
 		Gender:          gofakeit.RandomString(configs.Genders),
 		BornAt:          bornAt,
+		BloodType:       bloodTypes,
 		Currency:        gofakeit.RandomString(configs.Currencies),
 	}
 }

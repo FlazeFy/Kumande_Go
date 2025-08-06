@@ -18,7 +18,6 @@ type (
 		ConsumeBuyAt   *time.Time     `json:"consume_buy_at" gorm:"type:date;null" binding:"required"`
 		ConsumeQty     int            `json:"consume_qty" gorm:"type:int;not null" binding:"required,min=1"`
 		ConsumeImage   *string        `json:"consume_image" gorm:"type:varchar(1000);null" binding:"omitempty,max=1000"`
-		ConsumeComment *string        `json:"consume_comment" gorm:"type:varchar(255);null" binding:"omitempty,max=500"`
 		ConsumeProvide *string        `json:"consume_provide" gorm:"type:varchar(36);null" binding:"omitempty,max=36"`
 		ConsumeCal     *int           `json:"consume_calorie" gorm:"type:int;null" binding:"omitempty"`
 		ConsumeTag     datatypes.JSON `json:"consume_tag" gorm:"type:json;null" binding:"omitempty"`

@@ -24,6 +24,7 @@ var ConsumeFroms = []string{"GoFood", "GrabFood", "ShopeeFood", "Dine-In", "Take
 var ReminderTypes = []string{"Every Day", "Every Month", "Every Year"}
 var ReminderAttachmentTypes = []string{"Image", "URL", "Location"}
 var StatsConsumeField = []string{"consume_type", "consume_from", "consume_provide"}
+var BloodTypes = []string{"A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"}
 
 // Rules
 var RedisTime = 10 * time.Minute

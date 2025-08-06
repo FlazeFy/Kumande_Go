@@ -14,6 +14,7 @@ type (
 		Email           string    `json:"email" gorm:"type:varchar(500);not null" binding:"required,email,max=500"`
 		Gender          string    `json:"gender" gorm:"type:varchar(14);not null" binding:"required,max=14"`
 		BornAt          time.Time `json:"born_at" gorm:"type:date;null" binding:"omitempty"`
+		BloodType       *string   `json:"blood_type" gorm:"type:varchar(5);null" binding:"omitempty,max=5"`
 		Currency        string    `json:"currency" gorm:"type:varchar(3);not null" binding:"required,min=3,max=3"`
 		ActivityFactor  float64   `json:"activity_factor" gorm:"type:double precision;not null" binding:"required"`
 		TelegramUserId  *string   `json:"telegram_user_id" gorm:"type:varchar(36);null" binding:"omitempty,max=36"`

@@ -15,7 +15,7 @@ func ConsumeFactory() models.Consume {
 	if len(consumeProvide) > 36 {
 		consumeProvide = consumeProvide[:36]
 	}
-	consumePrice := gofakeit.Number(2000, 200000)
+	consumePrice := gofakeit.Number(2, 200) * 10000
 	end := time.Now().AddDate(0, 0, -1)
 	start := end.AddDate(0, 0, -60)
 	consumeBuyAt := gofakeit.DateRange(start, end)
@@ -35,20 +35,20 @@ func ConsumeFactory() models.Consume {
 		consumeTag = nil
 	}
 
-	var consumeComment *string
-	if gofakeit.Bool() {
-		consumeCommentDum := gofakeit.Sentence(gofakeit.Number(1, 3))
-		consumeComment = &consumeCommentDum
-	} else {
-		consumeComment = nil
-	}
-
 	var consumeDetail *string
 	if gofakeit.Bool() {
 		consumeDetailDum := gofakeit.Sentence(gofakeit.Number(3, 10))
 		consumeDetail = &consumeDetailDum
 	} else {
 		consumeDetail = nil
+	}
+
+	var consumeCal *int
+	if gofakeit.Bool() {
+		cal := gofakeit.Number(2, 50) * 10
+		consumeCal = &cal
+	} else {
+		consumeCal = nil
 	}
 
 	return models.Consume{
@@ -58,10 +58,10 @@ func ConsumeFactory() models.Consume {
 		ConsumeFrom:    gofakeit.RandomString(configs.ConsumeFroms),
 		ConsumePrice:   &consumePrice,
 		ConsumeBuyAt:   &consumeBuyAt,
+		ConsumeCal:     consumeCal,
 		ConsumeQty:     gofakeit.Number(1, 3),
 		ConsumeImage:   nil,
 		ConsumeProvide: &consumeProvide,
-		ConsumeComment: consumeComment,
 		ConsumeTag:     consumeTag,
 		IsFavorite:     gofakeit.Bool(),
 	}
