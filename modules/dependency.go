@@ -13,6 +13,7 @@ import (
 	"kumande/modules/feedback"
 	"kumande/modules/history"
 	"kumande/modules/reminder"
+	"kumande/modules/sleep"
 	"kumande/modules/stats"
 	"kumande/modules/tag"
 	"kumande/modules/user"
@@ -49,6 +50,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	reminderRepo := reminder.NewReminderRepository(db)
 	reminderUsedRepo := reminder.NewReminderUsedRepository(db)
 	statsRepo := stats.NewStatsRepository(db)
+	sleepRepo := sleep.NewSleepRepository(db)
 
 	// Dependency Services
 	adminService := admin.NewAdminService(adminRepo)
@@ -100,4 +102,5 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	seeders.SeedConsumeListRelations(consumeListRelRepo, userRepo, consumeRepo, consumeListRepo, 10)
 	seeders.SeedReminder(reminderRepo, userRepo, 20)
 	seeders.SeedReminderUsed(reminderUsedRepo, userRepo, reminderRepo, 20)
+	seeders.SeedSleeps(sleepRepo, userRepo, 60)
 }
