@@ -13,6 +13,7 @@ import (
 	"kumande/modules/feedback"
 	"kumande/modules/history"
 	"kumande/modules/hydration"
+	"kumande/modules/nutrition"
 	"kumande/modules/reminder"
 	"kumande/modules/sleep"
 	"kumande/modules/stats"
@@ -54,6 +55,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	sleepRepo := sleep.NewSleepRepository(db)
 	hydrationRepo := hydration.NewHydrationRepository(db)
 	consumeRateRepo := consume.NewConsumeRateRepository(db)
+	nutritionRepo := nutrition.NewNutritionRepository(db)
 
 	// Dependency Services
 	adminService := admin.NewAdminService(adminRepo)
@@ -108,4 +110,5 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	seeders.SeedSleeps(sleepRepo, userRepo, 60)
 	seeders.SeedHydrations(hydrationRepo, userRepo, 120)
 	seeders.SeedConsumeRates(consumeRateRepo, userRepo, consumeRepo, 20)
+	seeders.SeedNutritions(nutritionRepo, userRepo, 60)
 }
