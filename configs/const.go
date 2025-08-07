@@ -25,6 +25,7 @@ var ReminderTypes = []string{"Every Day", "Every Month", "Every Year"}
 var ReminderAttachmentTypes = []string{"Image", "URL", "Location"}
 var StatsConsumeField = []string{"consume_type", "consume_from", "consume_provide"}
 var StatsWeatherField = []string{"weather_condition", "weather_city"}
+var StatsReminderField = []string{"reminder_type"}
 var BloodTypes = []string{"A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"}
 
 // Rules

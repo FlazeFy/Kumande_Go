@@ -42,7 +42,7 @@ func (c *UserWeatherController) GetMostContextUserWeather(ctx *gin.Context) {
 	}
 
 	// Service: Get Most Context
-	wash, err := c.StatsService.GetMostUsedContext("user_weathers", targetCol, *userID)
+	weather, err := c.StatsService.GetMostUsedContext("user_weathers", targetCol, *userID)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		utils.BuildResponseMessage(ctx, "failed", "user weather", "empty", http.StatusNotFound, nil, nil)
 		return
@@ -53,5 +53,5 @@ func (c *UserWeatherController) GetMostContextUserWeather(ctx *gin.Context) {
 	}
 
 	// Response
-	utils.BuildResponseMessage(ctx, "success", "user weather", "get", http.StatusOK, wash, nil)
+	utils.BuildResponseMessage(ctx, "success", "user weather", "get", http.StatusOK, weather, nil)
 }
