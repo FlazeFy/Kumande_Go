@@ -26,6 +26,7 @@ var ReminderAttachmentTypes = []string{"Image", "URL", "Location"}
 var StatsConsumeField = []string{"consume_type", "consume_from", "consume_provide"}
 var StatsWeatherField = []string{"weather_condition", "weather_city"}
 var StatsReminderField = []string{"reminder_type"}
+var StatsUserTrackField = []string{"track_source"}
 var BloodTypes = []string{"A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"}
 
 // Rules
