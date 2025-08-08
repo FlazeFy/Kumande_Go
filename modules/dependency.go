@@ -70,6 +70,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	statsService := stats.NewStatsService(statsRepo, redisClient, statsCache)
 	reminderService := reminder.NewReminderService(reminderRepo)
 	userTrackService := userTrack.NewUserTrackService(userTrackRepo)
+	hydrationService := hydration.NewHydrationService(hydrationRepo)
 
 	// Dependency Controller
 	authController := auth.NewAuthController(authService)
@@ -81,6 +82,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	userWeatherController := userWeather.NewUserWeatherController(userWeatherService, statsService)
 	reminderController := reminder.NewReminderController(reminderService, statsService)
 	userTrackController := userTrack.NewUserTrackController(userTrackService, statsService)
+	hydrationController := hydration.NewHydrationController(hydrationService)
 
 	// Routes Endpoint
 	auth.AuthRouter(r, redisClient, *authController)
@@ -92,6 +94,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	userWeather.UserWeatherRouter(r, *userWeatherController, redisClient, db)
 	reminder.ReminderRouter(r, *reminderController, redisClient, db)
 	userTrack.UserTrackRouter(r, *userTrackController, redisClient, db)
+	hydration.HydrationRouter(r, *hydrationController, redisClient, db)
 
 	// Task Scheduler
 	SetUpScheduler(adminService, errorService, userWeatherService, userService, historyService)
