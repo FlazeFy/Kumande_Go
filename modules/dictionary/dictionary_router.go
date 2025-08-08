@@ -17,5 +17,12 @@ func DictionaryRouter(r *gin.Engine, dictionaryController DictionaryController, 
 		{
 			protected_dictionary_all.GET("/", dictionaryController.GetAllDictionary)
 		}
+
+		// Private Routes - Admin
+		protected_dictionary_admin := api.Group("/dictionaries")
+		protected_dictionary_admin.Use(middlewares.AuthMiddleware(redisClient, "admin"))
+		{
+			protected_dictionary_admin.POST("/", dictionaryController.PostCreateDictionary, middlewares.AuditTrailMiddleware(db, "post_create_dictionary"))
+		}
 	}
 }

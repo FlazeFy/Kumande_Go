@@ -2,6 +2,7 @@ package dictionary
 
 import (
 	"errors"
+	"kumande/models"
 	"kumande/utils"
 	"math"
 	"net/http"
@@ -44,4 +45,36 @@ func (c *DictionaryController) GetAllDictionary(ctx *gin.Context) {
 		"total_pages": totalPages,
 	}
 	utils.BuildResponseMessage(ctx, "success", "dictionary", "get", http.StatusOK, dictionary, metadata)
+}
+
+// Command
+func (c *DictionaryController) PostCreateDictionary(ctx *gin.Context) {
+	// Models
+	var req models.Dictionary
+
+	// Validate
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		formattedErrors := utils.BuildValidationError(err)
+		utils.BuildResponseMessage(ctx, "failed", "dictionary", formattedErrors, http.StatusBadRequest, nil, nil)
+		return
+	}
+
+	// Service : Create Dictionary
+	dictionary := models.Dictionary{
+		DictionaryType: req.DictionaryType,
+		DictionaryName: req.DictionaryName,
+	}
+	err := c.DictionaryService.CreateDictionary(&dictionary)
+	if err != nil {
+		if err.Error() == "dictionary already exists" {
+			utils.BuildResponseMessage(ctx, "failed", "dictionary", "already exists", http.StatusConflict, nil, nil)
+			return
+		}
+
+		utils.BuildErrorMessage(ctx, err.Error())
+		return
+	}
+
+	// Response
+	utils.BuildResponseMessage(ctx, "success", "dictionary", "post", http.StatusCreated, nil, nil)
 }

@@ -22,11 +22,11 @@ func (c *HydrationController) PostCreateHydration(ctx *gin.Context) {
 	var req models.Hydration
 
 	// Validate JSON
-	// if err := ctx.ShouldBindJSON(&req); err != nil {
-	// 	formattedErrors := utils.BuildValidationError(err)
-	// 	utils.BuildResponseMessage(ctx, "failed", "hydration", formattedErrors, http.StatusBadRequest, nil, nil)
-	// 	return
-	// }
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		formattedErrors := utils.BuildValidationError(err)
+		utils.BuildResponseMessage(ctx, "failed", "hydration", formattedErrors, http.StatusBadRequest, nil, nil)
+		return
+	}
 
 	// Get User ID
 	userID, err := utils.GetUserID(ctx)
