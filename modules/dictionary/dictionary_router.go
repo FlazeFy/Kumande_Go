@@ -23,6 +23,7 @@ func DictionaryRouter(r *gin.Engine, dictionaryController DictionaryController, 
 		protected_dictionary_admin.Use(middlewares.AuthMiddleware(redisClient, "admin"))
 		{
 			protected_dictionary_admin.POST("/", dictionaryController.PostCreateDictionary, middlewares.AuditTrailMiddleware(db, "post_create_dictionary"))
+			protected_dictionary_admin.DELETE("/:id", dictionaryController.HardDeleteDictionaryById, middlewares.AuditTrailMiddleware(db, "hard_delete_dictionary_by_id"))
 		}
 	}
 }

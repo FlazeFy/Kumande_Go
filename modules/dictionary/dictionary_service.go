@@ -5,6 +5,7 @@ import (
 	"kumande/models"
 	"kumande/utils"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -12,6 +13,7 @@ import (
 type DictionaryService interface {
 	GetAllDictionary(pagination utils.Pagination) ([]models.Dictionary, int, error)
 	CreateDictionary(dictionary *models.Dictionary) error
+	HardDeleteDictionaryByID(ID uuid.UUID) error
 }
 
 // Dictionary Struct
@@ -41,4 +43,8 @@ func (r *dictionaryService) CreateDictionary(dictionary *models.Dictionary) erro
 	}
 
 	return r.dictionaryRepo.CreateDictionary(dictionary)
+}
+
+func (r *dictionaryService) HardDeleteDictionaryByID(ID uuid.UUID) error {
+	return r.dictionaryRepo.HardDeleteDictionaryByID(ID)
 }

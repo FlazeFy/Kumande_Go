@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -77,4 +78,30 @@ func (c *DictionaryController) PostCreateDictionary(ctx *gin.Context) {
 
 	// Response
 	utils.BuildResponseMessage(ctx, "success", "dictionary", "post", http.StatusCreated, nil, nil)
+}
+
+func (c *DictionaryController) HardDeleteDictionaryById(ctx *gin.Context) {
+	// Param
+	id := ctx.Param("id")
+
+	// Parse Param UUID
+	dictionaryID, err := uuid.Parse(id)
+	if err != nil {
+		utils.BuildResponseMessage(ctx, "failed", "dictionary", "invalid id", http.StatusBadRequest, nil, nil)
+		return
+	}
+
+	err = c.DictionaryService.HardDeleteDictionaryByID(dictionaryID)
+	if err != nil {
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			utils.BuildResponseMessage(ctx, "failed", "dictionary", "empty", http.StatusNotFound, nil, nil)
+		default:
+			utils.BuildErrorMessage(ctx, err.Error())
+		}
+		return
+	}
+
+	// Response
+	utils.BuildResponseMessage(ctx, "success", "dictionary", "hard delete", http.StatusOK, nil, nil)
 }
