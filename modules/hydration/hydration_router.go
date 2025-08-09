@@ -16,6 +16,7 @@ func HydrationRouter(r *gin.Engine, hydrationController HydrationController, red
 		protected_hydration_user.Use(middlewares.AuthMiddleware(redisClient, "user"))
 		{
 			protected_hydration_user.POST("/", hydrationController.PostCreateHydration, middlewares.AuditTrailMiddleware(db, "post_create_hydration"))
+			protected_hydration_user.DELETE("/:id", hydrationController.HardDeleteHydrationById, middlewares.AuditTrailMiddleware(db, "hard_delete_hydration_by_id"))
 		}
 	}
 }

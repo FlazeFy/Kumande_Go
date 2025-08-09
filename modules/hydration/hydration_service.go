@@ -9,6 +9,7 @@ import (
 // Hydration Interface
 type HydrationService interface {
 	CreateHydration(req models.Hydration, userID uuid.UUID) error
+	HardDeleteHydrationByID(ID, userID uuid.UUID) error
 }
 
 // Hydration Struct
@@ -25,4 +26,8 @@ func NewHydrationService(hydrationRepo HydrationRepository) HydrationService {
 
 func (r *hydrationService) CreateHydration(hydration models.Hydration, userID uuid.UUID) error {
 	return r.hydrationRepo.CreateHydration(&hydration, userID)
+}
+
+func (r *hydrationService) HardDeleteHydrationByID(ID, userID uuid.UUID) error {
+	return r.hydrationRepo.HardDeleteHydrationByID(ID, userID)
 }

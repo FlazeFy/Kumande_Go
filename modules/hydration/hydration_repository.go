@@ -11,6 +11,7 @@ import (
 // Hydration Interface
 type HydrationRepository interface {
 	CreateHydration(hydration *models.Hydration, userID uuid.UUID) error
+	HardDeleteHydrationByID(ID, userID uuid.UUID) error
 	DeleteAll() error
 }
 
@@ -22,6 +23,20 @@ type hydrationRepository struct {
 // Hydration Constructor
 func NewHydrationRepository(db *gorm.DB) HydrationRepository {
 	return &hydrationRepository{db: db}
+}
+
+func (r *hydrationRepository) HardDeleteHydrationByID(ID, userID uuid.UUID) error {
+	// Query
+	result := r.db.Unscoped().Where("id = ?", ID).Where("created_by = ?", userID).Delete(&models.Hydration{})
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return nil
 }
 
 // For Seeder
