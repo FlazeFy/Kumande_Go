@@ -11,6 +11,7 @@ import (
 type AllergicRepository interface {
 	// For Seeder
 	CreateAllergic(allergic *models.Allergic, userId uuid.UUID) error
+	HardDeleteAllergicByID(ID, userID uuid.UUID) error
 	DeleteAll() error
 }
 
@@ -20,6 +21,20 @@ type allergicRepository struct {
 
 func NewAllergicRepository(db *gorm.DB) AllergicRepository {
 	return &allergicRepository{db: db}
+}
+
+func (r *allergicRepository) HardDeleteAllergicByID(ID, userID uuid.UUID) error {
+	// Query
+	result := r.db.Unscoped().Where("id = ?", ID).Where("created_by = ?", userID).Delete(&models.Allergic{})
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return nil
 }
 
 // For Seeder
