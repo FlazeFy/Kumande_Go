@@ -11,6 +11,7 @@ import (
 // Nutrition Interface
 type NutritionRepository interface {
 	CreateNutrition(nutrition *models.Nutrition, userID uuid.UUID) error
+	HardDeleteNutritionByID(ID, userID uuid.UUID) error
 	DeleteAll() error
 }
 
@@ -22,6 +23,20 @@ type nutritionRepository struct {
 // Nutrition Constructor
 func NewNutritionRepository(db *gorm.DB) NutritionRepository {
 	return &nutritionRepository{db: db}
+}
+
+func (r *nutritionRepository) HardDeleteNutritionByID(ID, userID uuid.UUID) error {
+	// Query
+	result := r.db.Unscoped().Where("id = ?", ID).Where("created_by = ?", userID).Delete(&models.Nutrition{})
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return nil
 }
 
 // For Seeder
