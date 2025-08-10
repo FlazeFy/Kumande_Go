@@ -73,6 +73,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	hydrationService := hydration.NewHydrationService(hydrationRepo)
 	nutritionService := nutrition.NewNutritionService(nutritionRepo)
 	allergicService := allergic.NewAllergicService(allergicRepo)
+	countCalorieService := countCalorie.NewCountCalorieService(countCalorieRepo)
 
 	// Dependency Controller
 	authController := auth.NewAuthController(authService)
@@ -87,6 +88,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	hydrationController := hydration.NewHydrationController(hydrationService)
 	nutritionController := nutrition.NewNutritionController(nutritionService)
 	allergicController := allergic.NewAllergicController(allergicService)
+	countCalorieController := countCalorie.NewCountCalorieController(countCalorieService)
 
 	// Routes Endpoint
 	auth.AuthRouter(r, redisClient, *authController)
@@ -101,6 +103,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	hydration.HydrationRouter(r, *hydrationController, redisClient, db)
 	nutrition.NutritionRouter(r, *nutritionController, redisClient, db)
 	allergic.AllergicRouter(r, *allergicController, redisClient, db)
+	countCalorie.CountCalorieRouter(r, *countCalorieController, redisClient, db)
 
 	// Task Scheduler
 	SetUpScheduler(adminService, errorService, userWeatherService, userService, historyService)
