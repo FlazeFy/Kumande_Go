@@ -21,7 +21,6 @@ import (
 	"kumande/modules/user"
 	userTrack "kumande/modules/user_track"
 	userWeather "kumande/modules/user_weather"
-	"kumande/seeders"
 
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
@@ -97,47 +96,13 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	tagController := tag.NewTagController(tagService)
 
 	// Routes Endpoint
-	auth.AuthRouter(r, redisClient, *authController)
-	feedback.FeedbackRouter(r, *feedbackController, redisClient, db)
-	history.HistoryRouter(r, *historyController, redisClient, db)
-	errors.ErrorRouter(r, *errorController, redisClient, db)
-	dictionary.DictionaryRouter(r, *dictionaryController, redisClient, db)
-	consume.ConsumeRouter(r, *consumeController, redisClient, db)
-	userWeather.UserWeatherRouter(r, *userWeatherController, redisClient, db)
-	reminder.ReminderRouter(r, *reminderController, redisClient, db)
-	userTrack.UserTrackRouter(r, *userTrackController, redisClient, db)
-	hydration.HydrationRouter(r, *hydrationController, redisClient, db)
-	nutrition.NutritionRouter(r, *nutritionController, redisClient, db)
-	allergic.AllergicRouter(r, *allergicController, redisClient, db)
-	countCalorie.CountCalorieRouter(r, *countCalorieController, redisClient, db)
-	bodyInfo.BodyInfoRouter(r, *bodyInfoController, redisClient, db)
-	sleep.SleepRouter(r, *sleepController, redisClient, db)
-	tag.TagRouter(r, *tagController, redisClient, db)
+	SetUpRoutes(r, db, redisClient, authController, feedbackController, historyController, errorController, dictionaryController, consumeController, userWeatherController,
+		reminderController, userTrackController, hydrationController, nutritionController, allergicController, countCalorieController, bodyInfoController, sleepController, tagController)
 
 	// Task Scheduler
 	SetUpScheduler(adminService, errorService, userWeatherService, userService, historyService)
 
 	// Seeder & Factories
-	seeders.SeedAdmins(adminRepo, 5)
-	seeders.SeedUsers(userRepo, 20)
-	seeders.SeedDictionaries(dictionaryRepo)
-	seeders.SeedHistories(historyRepo, userRepo, 5)
-	seeders.SeedBudget(budgetRepo, userRepo, 20)
-	seeders.SeedTags(tagRepo, userRepo, 20)
-	seeders.SeedErrors(errorRepo, 20)
-	seeders.SeedAllergic(allergicRepo, userRepo, 20)
-	seeders.SeedBodyInfo(bodyInfoRepo, userRepo, 60)
-	seeders.SeedFeedbacks(feedbackRepo, userRepo, 20)
-	seeders.SeedUserTracks(userTrackRepo, userRepo, 60)
-	seeders.SeedUserWeathers(userWeatherRepo, userRepo, 30)
-	seeders.SeedConsume(consumeRepo, userRepo, 100)
-	seeders.SeedConsumeList(consumeListRepo, userRepo, 50)
-	seeders.SeedCountCalorie(countCalorieRepo, userRepo, 60)
-	seeders.SeedConsumeListRelations(consumeListRelRepo, userRepo, consumeRepo, consumeListRepo, 10)
-	seeders.SeedReminder(reminderRepo, userRepo, 20)
-	seeders.SeedReminderUsed(reminderUsedRepo, userRepo, reminderRepo, 20)
-	seeders.SeedSleeps(sleepRepo, userRepo, 60)
-	seeders.SeedHydrations(hydrationRepo, userRepo, 120)
-	seeders.SeedConsumeRates(consumeRateRepo, userRepo, consumeRepo, 20)
-	seeders.SeedNutritions(nutritionRepo, userRepo, 60)
+	SetUpSeeder(adminRepo, userRepo, dictionaryRepo, historyRepo, budgetRepo, tagRepo, errorRepo, allergicRepo, bodyInfoRepo, feedbackRepo, userTrackRepo, userWeatherRepo, consumeRepo, consumeListRepo, countCalorieRepo,
+		consumeListRelRepo, reminderRepo, reminderUsedRepo, sleepRepo, hydrationRepo, consumeRateRepo, nutritionRepo)
 }
