@@ -1,17 +1,24 @@
 package bodyInfo
 
+import "github.com/google/uuid"
+
 // Body Info Interface
 type BodyInfoService interface {
+	HardDeleteBodyInfoByID(ID, userID uuid.UUID) error
 }
 
 // Body Info Struct
-type budgetService struct {
-	budgetRepo BodyInfoRepository
+type bodyInfoService struct {
+	bodyInfoRepo BodyInfoRepository
 }
 
 // Body Info Constructor
-func NewBodyInfoService(budgetRepo BodyInfoRepository) BodyInfoService {
-	return &budgetService{
-		budgetRepo: budgetRepo,
+func NewBodyInfoService(bodyInfoRepo BodyInfoRepository) BodyInfoService {
+	return &bodyInfoService{
+		bodyInfoRepo: bodyInfoRepo,
 	}
+}
+
+func (r *bodyInfoService) HardDeleteBodyInfoByID(ID, userID uuid.UUID) error {
+	return r.bodyInfoRepo.HardDeleteBodyInfoByID(ID, userID)
 }
