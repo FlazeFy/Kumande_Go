@@ -10,6 +10,9 @@ import (
 
 // Sleep Interface
 type SleepRepository interface {
+	HardDeleteSleepByID(ID, userID uuid.UUID) error
+
+	// For Seeder
 	CreateSleep(sleep *models.Sleep, userID uuid.UUID) error
 	DeleteAll() error
 }
@@ -22,6 +25,20 @@ type sleepRepository struct {
 // Sleep Constructor
 func NewSleepRepository(db *gorm.DB) SleepRepository {
 	return &sleepRepository{db: db}
+}
+
+func (r *sleepRepository) HardDeleteSleepByID(ID, userID uuid.UUID) error {
+	// Query
+	result := r.db.Unscoped().Where("id = ?", ID).Where("created_by = ?", userID).Delete(&models.Sleep{})
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return nil
 }
 
 // For Seeder
