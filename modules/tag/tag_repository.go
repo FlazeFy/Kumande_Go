@@ -10,6 +10,8 @@ import (
 )
 
 type TagRepository interface {
+	HardDeleteTagByID(ID, userID uuid.UUID) error
+
 	// For Seeder
 	CreateTag(tag *models.Tag, userId uuid.UUID) error
 	DeleteAll() error
@@ -21,6 +23,20 @@ type tagRepository struct {
 
 func NewTagRepository(db *gorm.DB) TagRepository {
 	return &tagRepository{db: db}
+}
+
+func (r *tagRepository) HardDeleteTagByID(ID, userID uuid.UUID) error {
+	// Query
+	result := r.db.Unscoped().Where("id = ?", ID).Where("created_by = ?", userID).Delete(&models.Tag{})
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return nil
 }
 
 // For Seeder

@@ -76,6 +76,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	countCalorieService := countCalorie.NewCountCalorieService(countCalorieRepo)
 	bodyInfoService := bodyInfo.NewBodyInfoService(bodyInfoRepo)
 	sleepService := sleep.NewSleepService(sleepRepo)
+	tagService := tag.NewTagService(tagRepo)
 
 	// Dependency Controller
 	authController := auth.NewAuthController(authService)
@@ -93,6 +94,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	countCalorieController := countCalorie.NewCountCalorieController(countCalorieService)
 	bodyInfoController := bodyInfo.NewBodyInfoController(bodyInfoService)
 	sleepController := sleep.NewSleepController(sleepService)
+	tagController := tag.NewTagController(tagService)
 
 	// Routes Endpoint
 	auth.AuthRouter(r, redisClient, *authController)
@@ -110,6 +112,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	countCalorie.CountCalorieRouter(r, *countCalorieController, redisClient, db)
 	bodyInfo.BodyInfoRouter(r, *bodyInfoController, redisClient, db)
 	sleep.SleepRouter(r, *sleepController, redisClient, db)
+	tag.TagRouter(r, *tagController, redisClient, db)
 
 	// Task Scheduler
 	SetUpScheduler(adminService, errorService, userWeatherService, userService, historyService)
