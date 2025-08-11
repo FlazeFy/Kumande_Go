@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -21,6 +22,39 @@ func NewReminderController(weatherService ReminderService, statsService stats.St
 		ReminderService: weatherService,
 		StatsService:    statsService,
 	}
+}
+
+// Command
+func (c *ReminderController) HardDeleteReminderByID(ctx *gin.Context) {
+	// Params
+	id := ctx.Param("id")
+
+	// Parse Param UUID
+	reminderID, err := uuid.Parse(id)
+	if err != nil {
+		utils.BuildResponseMessage(ctx, "failed", "reminder", "invalid id", http.StatusBadRequest, nil, nil)
+		return
+	}
+
+	// Get User ID
+	userID, err := utils.GetUserID(ctx)
+	if err != nil {
+		utils.BuildResponseMessage(ctx, "failed", "reminder", err.Error(), http.StatusBadRequest, nil, nil)
+		return
+	}
+
+	// Service : Hard Delete Reminder By ID
+	err = c.ReminderService.HardDeleteReminderByID(reminderID, *userID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		utils.BuildResponseMessage(ctx, "failed", "reminder", "empty", http.StatusNotFound, nil, nil)
+		return
+	}
+	if err != nil {
+		utils.BuildErrorMessage(ctx, err.Error())
+		return
+	}
+
+	utils.BuildResponseMessage(ctx, "success", "reminder", "hard delete", http.StatusOK, nil, nil)
 }
 
 // Query

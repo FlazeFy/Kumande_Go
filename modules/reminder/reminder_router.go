@@ -16,6 +16,7 @@ func ReminderRouter(r *gin.Engine, reminderController ReminderController, redisC
 		protected_reminder_all.Use(middlewares.AuthMiddleware(redisClient, "user"))
 		{
 			protected_reminder_all.GET("/most_context/:target_col", reminderController.GetMostContextReminder)
+			protected_reminder_all.DELETE("/;id", reminderController.HardDeleteReminderByID)
 		}
 	}
 }

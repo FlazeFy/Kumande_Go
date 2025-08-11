@@ -9,6 +9,8 @@ import (
 )
 
 type ReminderRepository interface {
+	HardDeleteReminderByID(ID, userID uuid.UUID) error
+
 	// For Seeder
 	CreateReminder(reminder *models.Reminder, userId uuid.UUID) error
 	DeleteAll() error
@@ -21,6 +23,20 @@ type reminderRepository struct {
 
 func NewReminderRepository(db *gorm.DB) ReminderRepository {
 	return &reminderRepository{db: db}
+}
+
+func (r *reminderRepository) HardDeleteReminderByID(ID, userID uuid.UUID) error {
+	// Query
+	result := r.db.Unscoped().Where("id = ?", ID).Where("created_by = ?", userID).Delete(&models.Reminder{})
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return nil
 }
 
 // For Seeder
