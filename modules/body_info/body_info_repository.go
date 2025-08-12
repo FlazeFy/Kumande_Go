@@ -2,6 +2,7 @@ package bodyInfo
 
 import (
 	"kumande/models"
+	"kumande/utils"
 	"time"
 
 	"github.com/google/uuid"
@@ -9,6 +10,7 @@ import (
 )
 
 type BodyInfoRepository interface {
+	FindAllBodyInfo(pagination utils.Pagination, userID uuid.UUID) ([]models.BodyInfo, int64, error)
 	HardDeleteBodyInfoByID(ID, userID uuid.UUID) error
 
 	// For Seeder
@@ -22,6 +24,38 @@ type bodyInfoRepository struct {
 
 func NewBodyInfoRepository(db *gorm.DB) BodyInfoRepository {
 	return &bodyInfoRepository{db: db}
+}
+
+func (r *bodyInfoRepository) FindAllBodyInfo(pagination utils.Pagination, userID uuid.UUID) ([]models.BodyInfo, int64, error) {
+	// Model
+	var total int64
+	var bodyInfo []models.BodyInfo
+
+	// Pagination Count
+	offset := (pagination.Page - 1) * pagination.Limit
+	countQuery := r.db.Table("body_infos").Where("created_by = ?", userID)
+
+	if err := countQuery.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// Model
+	query := r.db.Table("body_infos").
+		Where("created_by = ?", userID).
+		Order("created_at DESC").
+		Limit(pagination.Limit).
+		Offset(offset)
+
+	result := query.Find(&bodyInfo)
+
+	if result.Error != nil {
+		return nil, 0, result.Error
+	}
+	if len(bodyInfo) == 0 {
+		return nil, 0, gorm.ErrRecordNotFound
+	}
+
+	return bodyInfo, total, nil
 }
 
 func (r *bodyInfoRepository) HardDeleteBodyInfoByID(ID, userID uuid.UUID) error {

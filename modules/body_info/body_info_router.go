@@ -15,6 +15,7 @@ func BodyInfoRouter(r *gin.Engine, bodyInfoController BodyInfoController, redisC
 		protected_body_info_user := api.Group("/body_infos")
 		protected_body_info_user.Use(middlewares.AuthMiddleware(redisClient, "user"))
 		{
+			protected_body_info_user.GET("/", bodyInfoController.GetAllBodyInfo)
 			protected_body_info_user.DELETE("/:id", bodyInfoController.HardDeleteBodyInfoById, middlewares.AuditTrailMiddleware(db, "hard_delete_body_info_by_id"))
 		}
 	}
