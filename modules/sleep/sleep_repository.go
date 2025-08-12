@@ -2,6 +2,7 @@ package sleep
 
 import (
 	"kumande/models"
+	"kumande/utils"
 	"time"
 
 	"github.com/google/uuid"
@@ -10,6 +11,7 @@ import (
 
 // Sleep Interface
 type SleepRepository interface {
+	FindAllSleep(pagination utils.Pagination, userID uuid.UUID) ([]models.Sleep, int64, error)
 	HardDeleteSleepByID(ID, userID uuid.UUID) error
 
 	// For Seeder
@@ -25,6 +27,38 @@ type sleepRepository struct {
 // Sleep Constructor
 func NewSleepRepository(db *gorm.DB) SleepRepository {
 	return &sleepRepository{db: db}
+}
+
+func (r *sleepRepository) FindAllSleep(pagination utils.Pagination, userID uuid.UUID) ([]models.Sleep, int64, error) {
+	// Model
+	var total int64
+	var sleep []models.Sleep
+
+	// Pagination Count
+	offset := (pagination.Page - 1) * pagination.Limit
+	countQuery := r.db.Table("sleeps").Where("created_by = ?", userID)
+
+	if err := countQuery.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// Model
+	query := r.db.Table("sleeps").
+		Where("created_by = ?", userID).
+		Order("created_at DESC").
+		Limit(pagination.Limit).
+		Offset(offset)
+
+	result := query.Find(&sleep)
+
+	if result.Error != nil {
+		return nil, 0, result.Error
+	}
+	if len(sleep) == 0 {
+		return nil, 0, gorm.ErrRecordNotFound
+	}
+
+	return sleep, total, nil
 }
 
 func (r *sleepRepository) HardDeleteSleepByID(ID, userID uuid.UUID) error {

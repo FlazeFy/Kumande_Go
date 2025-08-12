@@ -15,6 +15,7 @@ func SleepRouter(r *gin.Engine, sleepController SleepController, redisClient *re
 		protected_sleep_user := api.Group("/sleeps")
 		protected_sleep_user.Use(middlewares.AuthMiddleware(redisClient, "user"))
 		{
+			protected_sleep_user.GET("/", sleepController.GetAllSleep)
 			protected_sleep_user.DELETE("/:id", sleepController.HardDeleteSleepById, middlewares.AuditTrailMiddleware(db, "hard_delete_sleep_by_id"))
 		}
 	}
