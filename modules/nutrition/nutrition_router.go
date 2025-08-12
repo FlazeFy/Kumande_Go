@@ -15,6 +15,7 @@ func NutritionRouter(r *gin.Engine, nutritionController NutritionController, red
 		protected_nutrition_user := api.Group("/nutritions")
 		protected_nutrition_user.Use(middlewares.AuthMiddleware(redisClient, "user"))
 		{
+			protected_nutrition_user.GET("/", nutritionController.GetAllNutrition)
 			protected_nutrition_user.DELETE("/:id", nutritionController.HardDeleteNutritionById, middlewares.AuditTrailMiddleware(db, "hard_delete_nutrition_by_id"))
 		}
 	}

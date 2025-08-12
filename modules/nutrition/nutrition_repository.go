@@ -2,6 +2,7 @@ package nutrition
 
 import (
 	"kumande/models"
+	"kumande/utils"
 	"time"
 
 	"github.com/google/uuid"
@@ -10,6 +11,7 @@ import (
 
 // Nutrition Interface
 type NutritionRepository interface {
+	FindAllNutrition(pagination utils.Pagination, userID uuid.UUID) ([]models.Nutrition, int64, error)
 	CreateNutrition(nutrition *models.Nutrition, userID uuid.UUID) error
 	HardDeleteNutritionByID(ID, userID uuid.UUID) error
 	DeleteAll() error
@@ -37,6 +39,38 @@ func (r *nutritionRepository) HardDeleteNutritionByID(ID, userID uuid.UUID) erro
 	}
 
 	return nil
+}
+
+func (r *nutritionRepository) FindAllNutrition(pagination utils.Pagination, userID uuid.UUID) ([]models.Nutrition, int64, error) {
+	// Model
+	var total int64
+	var nutrition []models.Nutrition
+
+	// Pagination Count
+	offset := (pagination.Page - 1) * pagination.Limit
+	countQuery := r.db.Table("nutritions").Where("created_by = ?", userID)
+
+	if err := countQuery.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// Model
+	query := r.db.Table("nutritions").
+		Where("created_by = ?", userID).
+		Order("created_at DESC").
+		Limit(pagination.Limit).
+		Offset(offset)
+
+	result := query.Find(&nutrition)
+
+	if result.Error != nil {
+		return nil, 0, result.Error
+	}
+	if len(nutrition) == 0 {
+		return nil, 0, gorm.ErrRecordNotFound
+	}
+
+	return nutrition, total, nil
 }
 
 // For Seeder
