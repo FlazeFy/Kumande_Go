@@ -10,6 +10,7 @@ import (
 
 // Hydration Interface
 type HydrationRepository interface {
+	FindHydrationByDate(userID uuid.UUID, date string) ([]models.Hydration, error)
 	CreateHydration(hydration *models.Hydration, userID uuid.UUID) error
 	HardDeleteHydrationByID(ID, userID uuid.UUID) error
 	DeleteAll() error
@@ -23,6 +24,26 @@ type hydrationRepository struct {
 // Hydration Constructor
 func NewHydrationRepository(db *gorm.DB) HydrationRepository {
 	return &hydrationRepository{db: db}
+}
+
+func (r *hydrationRepository) FindHydrationByDate(userID uuid.UUID, date string) ([]models.Hydration, error) {
+	// Model
+	var hydrations []models.Hydration
+
+	// Query
+	result := r.db.Where("created_by = ?", userID).
+		Where("TO_CHAR(created_at, 'DD-MM-YYYY') = ?", date).
+		Order("created_at DESC").
+		Find(&hydrations)
+
+	if len(hydrations) == 0 {
+		return nil, gorm.ErrRecordNotFound
+	}
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return hydrations, nil
 }
 
 func (r *hydrationRepository) HardDeleteHydrationByID(ID, userID uuid.UUID) error {

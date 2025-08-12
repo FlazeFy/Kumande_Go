@@ -19,6 +19,42 @@ func NewHydrationController(hydrationService HydrationService) *HydrationControl
 	return &HydrationController{HydrationService: hydrationService}
 }
 
+// Query
+func (c *HydrationController) GetHydrationByDate(ctx *gin.Context) {
+	// Param
+	date := ctx.Param("date")
+
+	// Validate Date
+	if !utils.ValidateDateFormat(date, "02-01-2006") {
+		utils.BuildResponseMessage(ctx, "failed", "hydration", "invalid date format", http.StatusBadRequest, nil, nil)
+		return
+	}
+
+	// Get User ID
+	userID, err := utils.GetUserID(ctx)
+	if err != nil {
+		utils.BuildResponseMessage(ctx, "failed", "hydration", err.Error(), http.StatusBadRequest, nil, nil)
+		return
+	}
+
+	// Service : Get Hydration Last History
+	// Note : date format DD-MM-YYYY
+	var data interface{}
+	data, err = c.HydrationService.GetHydrationByDate(*userID, date)
+	if err != nil {
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			utils.BuildResponseMessage(ctx, "failed", "hydration", "empty", http.StatusNotFound, nil, nil)
+		default:
+			utils.BuildErrorMessage(ctx, err.Error())
+		}
+		return
+	}
+
+	data = utils.StripFields(data, "created_by")
+	utils.BuildResponseMessage(ctx, "success", "hydration", "get", http.StatusOK, data, nil)
+}
+
 // Command
 func (c *HydrationController) PostCreateHydration(ctx *gin.Context) {
 	// Models
