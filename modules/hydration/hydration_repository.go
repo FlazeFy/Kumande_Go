@@ -2,6 +2,7 @@ package hydration
 
 import (
 	"kumande/models"
+	"kumande/utils"
 	"time"
 
 	"github.com/google/uuid"
@@ -10,6 +11,7 @@ import (
 
 // Hydration Interface
 type HydrationRepository interface {
+	FindAllHydration(pagination utils.Pagination, userID uuid.UUID) ([]models.Hydration, int64, error)
 	FindHydrationByDate(userID uuid.UUID, date string) ([]models.Hydration, error)
 	CreateHydration(hydration *models.Hydration, userID uuid.UUID) error
 	HardDeleteHydrationByID(ID, userID uuid.UUID) error
@@ -24,6 +26,38 @@ type hydrationRepository struct {
 // Hydration Constructor
 func NewHydrationRepository(db *gorm.DB) HydrationRepository {
 	return &hydrationRepository{db: db}
+}
+
+func (r *hydrationRepository) FindAllHydration(pagination utils.Pagination, userID uuid.UUID) ([]models.Hydration, int64, error) {
+	// Model
+	var total int64
+	var hydration []models.Hydration
+
+	// Pagination Count
+	offset := (pagination.Page - 1) * pagination.Limit
+	countQuery := r.db.Table("hydrations").Where("created_by = ?", userID)
+
+	if err := countQuery.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// Model
+	query := r.db.Table("hydrations").
+		Where("created_by = ?", userID).
+		Order("created_at DESC").
+		Limit(pagination.Limit).
+		Offset(offset)
+
+	result := query.Find(&hydration)
+
+	if result.Error != nil {
+		return nil, 0, result.Error
+	}
+	if len(hydration) == 0 {
+		return nil, 0, gorm.ErrRecordNotFound
+	}
+
+	return hydration, total, nil
 }
 
 func (r *hydrationRepository) FindHydrationByDate(userID uuid.UUID, date string) ([]models.Hydration, error) {
