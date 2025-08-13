@@ -15,6 +15,7 @@ func AllergicRouter(r *gin.Engine, allergicController AllergicController, redisC
 		protected_allergic_user := api.Group("/allergics")
 		protected_allergic_user.Use(middlewares.AuthMiddleware(redisClient, "user"))
 		{
+			protected_allergic_user.GET("/", allergicController.GetAllAllergic)
 			protected_allergic_user.DELETE("/:id", allergicController.HardDeleteAllergicById, middlewares.AuditTrailMiddleware(db, "hard_delete_allergic_by_id"))
 		}
 	}

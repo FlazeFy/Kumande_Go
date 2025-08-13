@@ -3,6 +3,7 @@ package allergic
 import (
 	"errors"
 	"kumande/utils"
+	"math"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,44 @@ type AllergicController struct {
 
 func NewAllergicController(allergicService AllergicService) *AllergicController {
 	return &AllergicController{AllergicService: allergicService}
+}
+
+// Query
+func (c *AllergicController) GetAllAllergic(ctx *gin.Context) {
+	var res interface{}
+
+	// Pagination
+	pagination := utils.GetPagination(ctx)
+
+	// Get User ID
+	userID, err := utils.GetUserID(ctx)
+	if err != nil {
+		utils.BuildResponseMessage(ctx, "failed", "allergic", err.Error(), http.StatusBadRequest, nil, nil)
+		return
+	}
+
+	// Service : Get All Allergic
+	res, total, err := c.AllergicService.GetAllAllergic(pagination, *userID)
+	if err != nil {
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			utils.BuildResponseMessage(ctx, "failed", "allergic", "empty", http.StatusNotFound, nil, nil)
+		default:
+			utils.BuildErrorMessage(ctx, err.Error())
+		}
+		return
+	}
+
+	totalPages := int(math.Ceil(float64(total) / float64(pagination.Limit)))
+	metadata := gin.H{
+		"total":       total,
+		"page":        pagination.Page,
+		"limit":       pagination.Limit,
+		"total_pages": totalPages,
+	}
+
+	res = utils.StripFields(res, "created_by")
+	utils.BuildResponseMessage(ctx, "success", "allergic", "get", http.StatusOK, res, metadata)
 }
 
 // Command

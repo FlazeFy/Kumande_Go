@@ -2,6 +2,7 @@ package allergic
 
 import (
 	"kumande/models"
+	"kumande/utils"
 	"time"
 
 	"github.com/google/uuid"
@@ -9,6 +10,8 @@ import (
 )
 
 type AllergicRepository interface {
+	FindAllAllergic(pagination utils.Pagination, userID uuid.UUID) ([]models.Allergic, int64, error)
+
 	// For Seeder
 	CreateAllergic(allergic *models.Allergic, userId uuid.UUID) error
 	HardDeleteAllergicByID(ID, userID uuid.UUID) error
@@ -21,6 +24,38 @@ type allergicRepository struct {
 
 func NewAllergicRepository(db *gorm.DB) AllergicRepository {
 	return &allergicRepository{db: db}
+}
+
+func (r *allergicRepository) FindAllAllergic(pagination utils.Pagination, userID uuid.UUID) ([]models.Allergic, int64, error) {
+	// Model
+	var total int64
+	var allergic []models.Allergic
+
+	// Pagination Count
+	offset := (pagination.Page - 1) * pagination.Limit
+	countQuery := r.db.Table("allergics").Where("created_by = ?", userID)
+
+	if err := countQuery.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// Model
+	query := r.db.Table("allergics").
+		Where("created_by = ?", userID).
+		Order("created_at DESC").
+		Limit(pagination.Limit).
+		Offset(offset)
+
+	result := query.Find(&allergic)
+
+	if result.Error != nil {
+		return nil, 0, result.Error
+	}
+	if len(allergic) == 0 {
+		return nil, 0, gorm.ErrRecordNotFound
+	}
+
+	return allergic, total, nil
 }
 
 func (r *allergicRepository) HardDeleteAllergicByID(ID, userID uuid.UUID) error {
