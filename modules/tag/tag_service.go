@@ -1,9 +1,15 @@
 package tag
 
-import "github.com/google/uuid"
+import (
+	"kumande/models"
+	"kumande/utils"
+
+	"github.com/google/uuid"
+)
 
 // Tag Interface
 type TagService interface {
+	GetAllTag(pagination utils.Pagination, userID uuid.UUID) ([]models.Tag, int64, error)
 	HardDeleteTagByID(ID, userID uuid.UUID) error
 }
 
@@ -17,6 +23,10 @@ func NewTagService(tagRepo TagRepository) TagService {
 	return &tagService{
 		tagRepo: tagRepo,
 	}
+}
+
+func (s *tagService) GetAllTag(pagination utils.Pagination, userID uuid.UUID) ([]models.Tag, int64, error) {
+	return s.tagRepo.FindAllTag(pagination, userID)
 }
 
 func (r *tagService) HardDeleteTagByID(ID, userID uuid.UUID) error {

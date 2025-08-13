@@ -15,6 +15,7 @@ func TagRouter(r *gin.Engine, tagController TagController, redisClient *redis.Cl
 		protected_tag_user := api.Group("/tags")
 		protected_tag_user.Use(middlewares.AuthMiddleware(redisClient, "user"))
 		{
+			protected_tag_user.GET("/", tagController.GetAllTag)
 			protected_tag_user.DELETE("/:id", tagController.HardDeleteTagById, middlewares.AuditTrailMiddleware(db, "hard_delete_tag_by_id"))
 		}
 	}
