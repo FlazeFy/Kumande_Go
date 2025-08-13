@@ -2,6 +2,7 @@ package reminder
 
 import (
 	"kumande/models"
+	"kumande/utils"
 	"time"
 
 	"github.com/google/uuid"
@@ -9,6 +10,7 @@ import (
 )
 
 type ReminderRepository interface {
+	FindAllReminder(pagination utils.Pagination, userID uuid.UUID) ([]models.Reminder, int64, error)
 	HardDeleteReminderByID(ID, userID uuid.UUID) error
 
 	// For Seeder
@@ -23,6 +25,38 @@ type reminderRepository struct {
 
 func NewReminderRepository(db *gorm.DB) ReminderRepository {
 	return &reminderRepository{db: db}
+}
+
+func (r *reminderRepository) FindAllReminder(pagination utils.Pagination, userID uuid.UUID) ([]models.Reminder, int64, error) {
+	// Model
+	var total int64
+	var reminder []models.Reminder
+
+	// Pagination Count
+	offset := (pagination.Page - 1) * pagination.Limit
+	countQuery := r.db.Table("reminders").Where("created_by = ?", userID)
+
+	if err := countQuery.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// Model
+	query := r.db.Table("reminders").
+		Where("created_by = ?", userID).
+		Order("created_at DESC").
+		Limit(pagination.Limit).
+		Offset(offset)
+
+	result := query.Find(&reminder)
+
+	if result.Error != nil {
+		return nil, 0, result.Error
+	}
+	if len(reminder) == 0 {
+		return nil, 0, gorm.ErrRecordNotFound
+	}
+
+	return reminder, total, nil
 }
 
 func (r *reminderRepository) HardDeleteReminderByID(ID, userID uuid.UUID) error {
