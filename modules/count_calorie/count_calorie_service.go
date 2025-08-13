@@ -1,26 +1,33 @@
 package countCalorie
 
 import (
+	"kumande/models"
+
 	"github.com/google/uuid"
 )
 
 // CountCalorie Interface
 type CountCalorieService interface {
+	GetLastCountCalorie(userID uuid.UUID) (*models.CountCalorie, error)
 	HardDeleteCountCalorieByID(ID, userID uuid.UUID) error
 }
 
 // CountCalorie Struct
-type dictionaryService struct {
-	dictionaryRepo CountCalorieRepository
+type countCalorieService struct {
+	countCalorieRepo CountCalorieRepository
 }
 
 // CountCalorie Constructor
-func NewCountCalorieService(dictionaryRepo CountCalorieRepository) CountCalorieService {
-	return &dictionaryService{
-		dictionaryRepo: dictionaryRepo,
+func NewCountCalorieService(countCalorieRepo CountCalorieRepository) CountCalorieService {
+	return &countCalorieService{
+		countCalorieRepo: countCalorieRepo,
 	}
 }
 
-func (r *dictionaryService) HardDeleteCountCalorieByID(ID, userID uuid.UUID) error {
-	return r.dictionaryRepo.HardDeleteCountCalorieByID(ID, userID)
+func (r *countCalorieService) GetLastCountCalorie(userID uuid.UUID) (*models.CountCalorie, error) {
+	return r.countCalorieRepo.FindLastCountCalorie(userID)
+}
+
+func (r *countCalorieService) HardDeleteCountCalorieByID(ID, userID uuid.UUID) error {
+	return r.countCalorieRepo.HardDeleteCountCalorieByID(ID, userID)
 }

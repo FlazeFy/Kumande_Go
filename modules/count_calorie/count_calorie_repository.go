@@ -9,6 +9,7 @@ import (
 )
 
 type CountCalorieRepository interface {
+	FindLastCountCalorie(userID uuid.UUID) (*models.CountCalorie, error)
 	HardDeleteCountCalorieByID(ID, userID uuid.UUID) error
 
 	// For Seeder
@@ -22,6 +23,23 @@ type countCalorieRepository struct {
 
 func NewCountCalorieRepository(db *gorm.DB) CountCalorieRepository {
 	return &countCalorieRepository{db: db}
+}
+
+func (r *countCalorieRepository) FindLastCountCalorie(userID uuid.UUID) (*models.CountCalorie, error) {
+	// Model
+	var countCalories models.CountCalorie
+
+	// Query
+	result := r.db.Table("count_calories").
+		Where("created_by = ?", userID).
+		Order("created_at DESC").
+		First(&countCalories)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &countCalories, nil
 }
 
 func (r *countCalorieRepository) HardDeleteCountCalorieByID(ID, userID uuid.UUID) error {

@@ -28,16 +28,10 @@ func ConvertToSlug(s string) string {
 	return strings.ReplaceAll(strings.ToLower(s), " ", "_")
 }
 
-func StripFields(data interface{}, keysToRemove ...string) []map[string]interface{} {
+func StripFields(data interface{}, keysToRemove ...string) interface{} {
 	jsonBytes, err := json.Marshal(data)
 	if err != nil {
 		log.Println("marshal error:", err)
-		return nil
-	}
-
-	var result []map[string]interface{}
-	if err := json.Unmarshal(jsonBytes, &result); err != nil {
-		log.Println("unmarshal error:", err)
 		return nil
 	}
 
@@ -46,11 +40,31 @@ func StripFields(data interface{}, keysToRemove ...string) []map[string]interfac
 		keySet[key] = struct{}{}
 	}
 
-	for i := range result {
-		for key := range keySet {
-			delete(result[i], key)
+	if len(jsonBytes) > 0 && jsonBytes[0] == '[' {
+		// List
+		var result []map[string]interface{}
+		if err := json.Unmarshal(jsonBytes, &result); err != nil {
+			log.Println("unmarshal error:", err)
+			return nil
 		}
+
+		for i := range result {
+			for key := range keySet {
+				delete(result[i], key)
+			}
+		}
+		return result
 	}
 
+	// Single Object
+	var result map[string]interface{}
+	if err := json.Unmarshal(jsonBytes, &result); err != nil {
+		log.Println("unmarshal error:", err)
+		return nil
+	}
+
+	for key := range keySet {
+		delete(result, key)
+	}
 	return result
 }
