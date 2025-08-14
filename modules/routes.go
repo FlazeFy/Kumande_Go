@@ -4,6 +4,7 @@ import (
 	"kumande/modules/allergic"
 	"kumande/modules/auth"
 	bodyInfo "kumande/modules/body_info"
+	"kumande/modules/budget"
 	"kumande/modules/consume"
 	countCalorie "kumande/modules/count_calorie"
 	"kumande/modules/dictionary"
@@ -39,7 +40,8 @@ func SetUpRoutes(r *gin.Engine, db *gorm.DB, redisClient *redis.Client,
 	countCalorieController *countCalorie.CountCalorieController,
 	bodyInfoController *bodyInfo.BodyInfoController,
 	sleepController *sleep.SleepController,
-	tagController *tag.TagController) {
+	tagController *tag.TagController,
+	budgetController *budget.BudgetController) {
 
 	// Routes Endpoint
 	auth.AuthRouter(r, redisClient, *authController)
@@ -58,4 +60,5 @@ func SetUpRoutes(r *gin.Engine, db *gorm.DB, redisClient *redis.Client,
 	bodyInfo.BodyInfoRouter(r, *bodyInfoController, redisClient, db)
 	sleep.SleepRouter(r, *sleepController, redisClient, db)
 	tag.TagRouter(r, *tagController, redisClient, db)
+	budget.BudgetRouter(r, *budgetController, redisClient, db)
 }

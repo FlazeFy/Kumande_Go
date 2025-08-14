@@ -76,6 +76,7 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	bodyInfoService := bodyInfo.NewBodyInfoService(bodyInfoRepo)
 	sleepService := sleep.NewSleepService(sleepRepo)
 	tagService := tag.NewTagService(tagRepo)
+	budgetService := budget.NewBudgetService(budgetRepo)
 
 	// Dependency Controller
 	authController := auth.NewAuthController(authService)
@@ -94,10 +95,12 @@ func SetUpDependency(r *gin.Engine, db *gorm.DB, redisClient *redis.Client) {
 	bodyInfoController := bodyInfo.NewBodyInfoController(bodyInfoService)
 	sleepController := sleep.NewSleepController(sleepService)
 	tagController := tag.NewTagController(tagService)
+	budgetController := budget.NewBudgetController(budgetService)
 
 	// Routes Endpoint
 	SetUpRoutes(r, db, redisClient, authController, feedbackController, historyController, errorController, dictionaryController, consumeController, userWeatherController,
-		reminderController, userTrackController, hydrationController, nutritionController, allergicController, countCalorieController, bodyInfoController, sleepController, tagController)
+		reminderController, userTrackController, hydrationController, nutritionController, allergicController, countCalorieController, bodyInfoController, sleepController, tagController,
+		budgetController)
 
 	// Task Scheduler
 	SetUpScheduler(adminService, errorService, userWeatherService, userService, historyService)
