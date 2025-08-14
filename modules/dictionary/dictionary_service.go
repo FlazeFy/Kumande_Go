@@ -12,6 +12,7 @@ import (
 // Dictionary Interface
 type DictionaryService interface {
 	GetAllDictionary(pagination utils.Pagination) ([]models.Dictionary, int, error)
+	GetDictionaryByType(dictionaryType string) ([]models.Dictionary, error)
 	CreateDictionary(dictionary *models.Dictionary) error
 	HardDeleteDictionaryByID(ID uuid.UUID) error
 }
@@ -30,6 +31,10 @@ func NewDictionaryService(dictionaryRepo DictionaryRepository) DictionaryService
 
 func (r *dictionaryService) GetAllDictionary(pagination utils.Pagination) ([]models.Dictionary, int, error) {
 	return r.dictionaryRepo.FindAllDictionary(pagination)
+}
+
+func (r *dictionaryService) GetDictionaryByType(dictionaryType string) ([]models.Dictionary, error) {
+	return r.dictionaryRepo.FindDictionaryByType(dictionaryType)
 }
 
 func (r *dictionaryService) CreateDictionary(dictionary *models.Dictionary) error {

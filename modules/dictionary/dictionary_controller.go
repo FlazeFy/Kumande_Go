@@ -21,6 +21,26 @@ func NewDictionaryController(dictionaryService DictionaryService) *DictionaryCon
 }
 
 // Queries
+func (c *DictionaryController) GetDictionaryByType(ctx *gin.Context) {
+	// Param
+	dictionaryType := ctx.Param("dictionary_type")
+
+	// Service : Get Dictionary By Type
+	dictionary, err := c.DictionaryService.GetDictionaryByType(dictionaryType)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			utils.BuildResponseMessage(ctx, "failed", "dictionary", "get", http.StatusNotFound, nil, nil)
+		default:
+			utils.BuildErrorMessage(ctx, err.Error())
+		}
+		return
+	}
+
+	utils.BuildResponseMessage(ctx, "success", "dictionary", "get", http.StatusOK, dictionary, nil)
+}
+
 func (c *DictionaryController) GetAllDictionary(ctx *gin.Context) {
 	// Pagination
 	pagination := utils.GetPagination(ctx)

@@ -15,6 +15,7 @@ type DictionaryRepository interface {
 	CreateDictionary(dictionary *models.Dictionary) error
 	FindAllDictionary(pagination utils.Pagination) ([]models.Dictionary, int, error)
 	FindOneDictionaryByName(dictionaryName string) (*models.Dictionary, error)
+	FindDictionaryByType(dictionaryType string) ([]models.Dictionary, error)
 	HardDeleteDictionaryByID(ID uuid.UUID) error
 
 	// For Seeder
@@ -61,6 +62,22 @@ func (r *dictionaryRepository) FindAllDictionary(pagination utils.Pagination) ([
 
 	total = len(dictionaries)
 	return dictionaries, total, nil
+}
+
+func (r *dictionaryRepository) FindDictionaryByType(dictionaryType string) ([]models.Dictionary, error) {
+	// Model
+	var dictionaries []models.Dictionary
+
+	// Query
+	err := r.db.Where("dictionary_type = ?", dictionaryType).
+		Order("dictionary_name ASC").
+		Find(&dictionaries).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return dictionaries, nil
 }
 
 func (r *dictionaryRepository) FindOneDictionaryByName(dictionaryName string) (*models.Dictionary, error) {

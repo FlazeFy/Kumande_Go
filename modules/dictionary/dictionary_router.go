@@ -16,6 +16,7 @@ func DictionaryRouter(r *gin.Engine, dictionaryController DictionaryController, 
 		protected_dictionary_all.Use(middlewares.AuthMiddleware(redisClient, "user", "admin"))
 		{
 			protected_dictionary_all.GET("/", dictionaryController.GetAllDictionary)
+			protected_dictionary_all.GET("/:dictionary_type", dictionaryController.GetDictionaryByType)
 		}
 
 		// Private Routes - Admin
