@@ -9,6 +9,7 @@ import (
 
 // Budget Interface
 type BudgetService interface {
+	GetBudgetByYear(year string, userID uuid.UUID) ([]models.Budget, error)
 	GetAllBudget(pagination utils.Pagination, userID uuid.UUID) ([]models.Budget, int64, error)
 }
 
@@ -26,4 +27,8 @@ func NewBudgetService(budgetRepo BudgetRepository) BudgetService {
 
 func (r *budgetService) GetAllBudget(pagination utils.Pagination, userID uuid.UUID) ([]models.Budget, int64, error) {
 	return r.budgetRepo.FindAllBudget(pagination, userID)
+}
+
+func (r *budgetService) GetBudgetByYear(year string, userID uuid.UUID) ([]models.Budget, error) {
+	return r.budgetRepo.FindBudgetByYear(year, userID)
 }

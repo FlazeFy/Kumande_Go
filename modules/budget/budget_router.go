@@ -16,6 +16,7 @@ func BudgetRouter(r *gin.Engine, budgetController BudgetController, redisClient 
 		protected_budget_all.Use(middlewares.AuthMiddleware(redisClient, "user", "admin"))
 		{
 			protected_budget_all.GET("/", budgetController.GetAllBudget)
+			protected_budget_all.GET("/:year", budgetController.GetBudgetByYear)
 		}
 	}
 }

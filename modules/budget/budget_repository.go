@@ -11,6 +11,7 @@ import (
 
 type BudgetRepository interface {
 	FindAllBudget(pagination utils.Pagination, userID uuid.UUID) ([]models.Budget, int64, error)
+	FindBudgetByYear(year string, userID uuid.UUID) ([]models.Budget, error)
 
 	// For Seeder
 	CreateBudget(budget *models.Budget, userId uuid.UUID) error
@@ -71,6 +72,43 @@ func (r *budgetRepository) FindAllBudget(pagination utils.Pagination, userID uui
 	}
 
 	return budget, total, nil
+}
+
+func (r *budgetRepository) FindBudgetByYear(year string, userID uuid.UUID) ([]models.Budget, error) {
+	// Model
+	var budget []models.Budget
+
+	// Model
+	query := r.db.Table("budgets").
+		Where("created_by = ?", userID).
+		Where("budget_year = ?", year).
+		Order(`
+			CASE budget_month
+				WHEN 'Jan' THEN 1
+				WHEN 'Feb' THEN 2
+				WHEN 'Mar' THEN 3
+				WHEN 'Apr' THEN 4
+				WHEN 'May' THEN 5
+				WHEN 'Jun' THEN 6
+				WHEN 'Jul' THEN 7
+				WHEN 'Aug' THEN 8
+				WHEN 'Sep' THEN 9
+				WHEN 'Oct' THEN 10
+				WHEN 'Nov' THEN 11
+				WHEN 'Dec' THEN 12
+			END DESC
+		`)
+
+	result := query.Find(&budget)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if len(budget) == 0 {
+		return nil, gorm.ErrRecordNotFound
+	}
+
+	return budget, nil
 }
 
 // For Seeder

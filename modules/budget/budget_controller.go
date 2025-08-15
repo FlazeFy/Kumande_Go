@@ -52,3 +52,29 @@ func (c *BudgetController) GetAllBudget(ctx *gin.Context) {
 	}
 	utils.BuildResponseMessage(ctx, "success", "budget", "get", http.StatusOK, budget, metadata)
 }
+
+func (c *BudgetController) GetBudgetByYear(ctx *gin.Context) {
+	// Param
+	year := ctx.Param("year")
+
+	// Get User ID
+	userID, err := utils.GetUserID(ctx)
+	if err != nil {
+		utils.BuildResponseMessage(ctx, "failed", "consume", err.Error(), http.StatusBadRequest, nil, nil)
+		return
+	}
+
+	// Service : Get Budget By Year
+	budget, err := c.BudgetService.GetBudgetByYear(year, *userID)
+	if err != nil {
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			utils.BuildResponseMessage(ctx, "failed", "budget", "get", http.StatusNotFound, nil, nil)
+		default:
+			utils.BuildErrorMessage(ctx, err.Error())
+		}
+		return
+	}
+
+	utils.BuildResponseMessage(ctx, "success", "budget", "get", http.StatusOK, budget, nil)
+}
